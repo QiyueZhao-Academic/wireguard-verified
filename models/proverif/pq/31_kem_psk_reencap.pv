@@ -1,0 +1,55 @@
+(* ------------------------------------------------------------------------- *)
+(* Post-quantum psk establishment with a KEM that does NOT bind the shared     *)
+(* the encapsulation key.                                                     *)
+(*                                                                           *)
+(* Construction under test (the Rosenpass shape, reduced to its essential     *)
+(* step): the initiator encapsulates against the responder's KEM public key   *)
+(* and both sides use the resulting shared secret as the WireGuard psk.       *)
+(*                                                                           *)
+(* This is the control for 30.  Everything else is identical; only the KEM's  *)
+(* binding property is removed.  The expected outcome is that secrecy of the  *)
+(* shared secret survives while agreement fails: the attacker re-encapsulates *)
+(* a ciphertext it observed toward a second responder, so two responders      *)
+(* accept the same psk under different encapsulation keys.  No primitive is   *)
+(* broken -- the failure is entirely one of binding.                          *)
+(* ------------------------------------------------------------------------- *)
+
+free netk: channel.
+
+event PskInitiator(kempk, key).   (* initiator's view: peer encap key, psk *)
+event PskResponder(kempk, key).   (* responder's view: own  encap key, psk *)
+
+free pskWitness: bitstring [private].
+
+(* Secrecy of the established psk. *)
+query attacker(pskWitness).
+
+(* Soundness of the responder's view.  A bare KEM encapsulation authenticates
+   nobody -- anyone holding the public encapsulation key can send a well-formed
+   ciphertext -- so the honest statement is disjunctive: any psk the responder
+   accepts was either produced by the honest initiator for that same key, or is
+   already known to the attacker because the attacker produced it itself.  A
+   KEM that fails this has lost more than authentication. *)
+query p: kempk, k: key;
+      event(PskResponder(p, k)) ==> (event(PskInitiator(p, k)) || attacker(k)).
+
+let KemInitiator(peerPk: kempk) =
+    new r: bitstring;
+    let ct = encapW(peerPk, r) in
+    let psk = kemssW(r) in
+    event PskInitiator(peerPk, psk);
+    out(netk, ct);
+    out(netk, aead(psk, zero_nonce, pskWitness, EMPTY)).
+
+let KemResponder(sk: kemsk) =
+    in(netk, (ct: kemct));
+    let psk = decapW(sk, ct) in
+    event PskResponder(kempub(sk), psk).
+
+process
+  new skR: kemsk;
+  new skR2: kemsk;              (* a second responder, the redirection target *)
+  let pkR  = kempub(skR)  in
+  let pkR2 = kempub(skR2) in
+  out(netk, (pkR, pkR2));
+  ( (!KemInitiator(pkR)) | (!KemResponder(skR)) | (!KemResponder(skR2)) )

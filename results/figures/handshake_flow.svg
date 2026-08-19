@@ -1,0 +1,16 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='700' height='340' viewBox='0 0 700 340'>
+<rect width='700' height='340' fill='white'/>
+<line x1='150' y1='60' x2='150' y2='300' stroke='#d4d4d4' stroke-width='1.5'/>
+<line x1='550' y1='60' x2='550' y2='300' stroke='#d4d4d4' stroke-width='1.5'/>
+<text x='150' y='40' font-family='Helvetica,Arial,sans-serif' font-size='13' fill='#1a1a1a' text-anchor='middle' font-weight='bold'>Initiator</text>
+<text x='550' y='40' font-family='Helvetica,Arial,sans-serif' font-size='13' fill='#1a1a1a' text-anchor='middle' font-weight='bold'>Responder</text>
+<text x='150' y='56' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>static (s_i, S_i), psk</text>
+<text x='550' y='56' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>static (s_r, S_r), psk</text>
+<line x1='150' y1='120' x2='550' y2='120' stroke='#1a1a1a' stroke-width='1.4'/><polygon points='550,120 541,116 541,124' fill='#1a1a1a'/><text x='350.0' y='112' font-family='Helvetica,Arial,sans-serif' font-size='11' fill='#1a1a1a' text-anchor='middle' font-weight='bold'>handshake initiation, 148 B</text><text x='350.0' y='134' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>E_i | enc_static (48 B) | enc_timestamp (28 B) | mac1 | mac2</text>
+<text x='138' y='150' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='end' font-weight='normal'>es = DH(e_i, S_r),  ss = DH(s_i, S_r)</text>
+<line x1='550' y1='215' x2='150' y2='215' stroke='#1a1a1a' stroke-width='1.4'/><polygon points='150,215 159,211 159,219' fill='#1a1a1a'/><text x='350.0' y='207' font-family='Helvetica,Arial,sans-serif' font-size='11' fill='#1a1a1a' text-anchor='middle' font-weight='bold'>handshake response, 92 B</text><text x='350.0' y='229' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>E_r | enc_nothing (16 B) | mac1 | mac2</text>
+<text x='562' y='245' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='start' font-weight='normal'>ee = DH(e_r, E_i),  se = DH(e_r, S_i)</text>
+<text x='562' y='258' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#2f6f4e' text-anchor='start' font-weight='normal'>psk mixed by KDF_3</text>
+<line x1='150' y1='290' x2='550' y2='290' stroke='#2f6f4e' stroke-width='1.2' stroke-dasharray='4,3'/>
+<text x='350.0' y='283' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#2f6f4e' text-anchor='middle' font-weight='normal'>transport keys (T_i, T_r) = KDF_2(ck, empty)</text>
+</svg>

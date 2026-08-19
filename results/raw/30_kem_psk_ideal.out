@@ -1,0 +1,126 @@
+Linear part:
+dh(pk(x),y) = dh(pk(y),x)
+Completing equations...
+Completed equations:
+dh(pk(x),y) = dh(pk(y),x)
+Convergent part: No equation.
+Process 0 (that is, the initial process):
+{1}new skR: kemsk;
+{2}let pkR: kempk = kempub(skR) in
+{3}out(netk, pkR);
+(
+    {4}!
+    {5}new r: bitstring;
+    {6}let ct: kemct = encap(pkR,r) in
+    {7}let psk: key = kemss(pkR,r) in
+    {8}event PskInitiator(pkR,psk);
+    {9}out(netk, ct);
+    {10}out(netk, aead(psk,zero_nonce,pskWitness,EMPTY))
+) | (
+    {11}!
+    {12}let sk: kemsk = skR in
+    {13}in(netk, ct_1: kemct);
+    {14}let psk_1: key = decap(sk,ct_1) in
+    {15}event PskResponder(kempub(sk),psk_1)
+)
+
+--  Process 1 (that is, process 0, with let moved downwards):
+{1}new skR: kemsk;
+{2}let pkR: kempk = kempub(skR) in
+{3}out(netk, pkR);
+(
+    {4}!
+    {5}new r: bitstring;
+    {7}let psk: key = kemss(pkR,r) in
+    {8}event PskInitiator(pkR,psk);
+    {6}let ct: kemct = encap(pkR,r) in
+    {9}out(netk, ct);
+    {10}out(netk, aead(psk,zero_nonce,pskWitness,EMPTY))
+) | (
+    {11}!
+    {13}in(netk, ct_1: kemct);
+    {12}let sk: kemsk = skR in
+    {14}let psk_1: key = decap(sk,ct_1) in
+    {15}event PskResponder(kempub(sk),psk_1)
+)
+
+-- Query not attacker(pskWitness[]) in process 1.
+Translating the process into Horn clauses...
+Termination warning: Selecting an hypothesis matching the conclusion.
+In case of non-termination, try a noselect declaration implying the following one:
+   noselect r_1:bitstring, p1:kempk; attacker(encapW(*p1,*r_1)).
+Completing...
+Starting query not attacker(pskWitness[])
+RESULT not attacker(pskWitness[]) is true.
+-- Query event(PskResponder(p,k)) ==> event(PskInitiator(p,k)) || attacker(k) in process 1.
+Translating the process into Horn clauses...
+Termination warning: Selecting an hypothesis matching the conclusion.
+In case of non-termination, try a noselect declaration implying the following one:
+   noselect r_1:bitstring, p1:kempk; attacker(encapW(*p1,*r_1)).
+Completing...
+Starting query event(PskResponder(p,k)) ==> event(PskInitiator(p,k)) || attacker(k)
+Inside query: trying to prove attacker(kemss(kempub(skR[]),r_1)) from attacker(r_1)
+Completing...
+Inside query: proof failed
+goal reachable: attacker(r_1) -> event(PskResponder(kempub(skR[]),kemss(kempub(skR[]),r_1)))
+
+Derivation:
+
+1. We assume as hypothesis that
+attacker(r_1).
+
+2. The attacker initially knows netk[].
+attacker(netk[]).
+
+3. The message kempub(skR[]) may be sent on channel netk[] at output {3}.
+mess(netk[],kempub(skR[])).
+
+4. By 2, the attacker may have the channel netk[].
+By 3, the message kempub(skR[]) may be sent on this channel.
+So the attacker may obtain the message kempub(skR[]) by listening on this channel.
+attacker(kempub(skR[])).
+
+5. By 4, the attacker may know kempub(skR[]).
+By 1, the attacker may know r_1.
+Using the function encap the attacker may obtain encap(kempub(skR[]),r_1).
+attacker(encap(kempub(skR[]),r_1)).
+
+6. By 2, the attacker may have the channel netk[].
+By 5, the attacker may have the message encap(kempub(skR[]),r_1).
+So the attacker may send this message on this channel.
+mess(netk[],encap(kempub(skR[]),r_1)).
+
+7. The message encap(kempub(skR[]),r_1) that may be sent on channel netk[] by 6 may be received at input {13}.
+So event PskResponder(kempub(skR[]),kemss(kempub(skR[]),r_1)) may be executed at {15}.
+event(PskResponder(kempub(skR[]),kemss(kempub(skR[]),r_1))).
+
+8. By 7, event(PskResponder(kempub(skR[]),kemss(kempub(skR[]),r_1))).
+The goal is reached, represented in the following fact:
+event(PskResponder(kempub(skR[]),kemss(kempub(skR[]),r_1))).
+
+
+A more detailed output of the traces is available with
+  set traceDisplay = long.
+
+new skR: kemsk creating skR_1 at {1}
+
+out(netk, ~M) with ~M = kempub(skR_1) at {3}
+
+in(netk, encap(~M,a)) with encap(~M,a) = encap(kempub(skR_1),a) at {13} in copy a_1
+
+event PskResponder(kempub(skR_1),kemss(kempub(skR_1),a)) at {15} in copy a_1 (goal)
+
+The event PskResponder(kempub(skR_1),kemss(kempub(skR_1),a)) is executed at {15} in copy a_1.
+A trace has been found.
+I could not confirm that the previous trace falsifies the query.
+RESULT event(PskResponder(p,k)) ==> event(PskInitiator(p,k)) || attacker(k) cannot be proved.
+
+--------------------------------------------------------------
+Verification summary:
+
+Query not attacker(pskWitness[]) is true.
+
+Query event(PskResponder(p,k)) ==> event(PskInitiator(p,k)) || attacker(k) cannot be proved.
+
+--------------------------------------------------------------
+

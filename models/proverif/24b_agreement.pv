@@ -1,0 +1,12 @@
+(* P5b -- non-injective agreement, initiator authenticated to the responder.
+   If the responder completes a session it attributes to si, then si did begin
+   a run naming sr.  This is the level at which the static-static term ss and
+   the static-ephemeral term se do their work. *)
+query si: G, sr: G, ki: key, kr: key;
+      event(ResponderDone(si, sr, ki, kr)) ==> event(InitiatorBegin(si, sr)).
+process
+  new siA: exponent; let SA = pk(siA) in
+  new srB: exponent; let SB = pk(srB) in
+  new psk: key;
+  out(net, (SA, SB));
+  ( (!Initiator(siA, SA, SB, psk)) | (!Responder(srB, SB, psk)) )

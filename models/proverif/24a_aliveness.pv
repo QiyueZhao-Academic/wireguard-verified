@@ -1,0 +1,19 @@
+(* P5a -- aliveness of the responder, as seen by the initiator.
+   If the initiator completes a session, the intended responder really took
+   part in a run agreeing on both static values and both transport keys. *)
+set redundantHypElim = beginOnly.
+
+(* Aliveness is weaker than agreement by design: it asserts only that the
+   intended responder executed the protocol.  Because the responder commits
+   to the key material before message 2 leaves the host, the strongest form
+   available on this side is agreement on both static values and both
+   transport keys, which is what is asked here.  Agreement in the opposite
+   direction is the subject of 24b. *)
+query si: G, sr: G, ki: key, kr: key;
+      event(InitiatorDone(si, sr, ki, kr)) ==> event(ResponderBegin(si, sr, ki, kr)).
+process
+  new siA: exponent; let SA = pk(siA) in
+  new srB: exponent; let SB = pk(srB) in
+  new psk: key;
+  out(net, (SA, SB));
+  ( (!Initiator(siA, SA, SB, psk)) | (!Responder(srB, SB, psk)) )

@@ -1,0 +1,174 @@
+Linear part:
+dh(pk(x),y) = dh(pk(y),x)
+Completing equations...
+Completed equations:
+dh(pk(x),y) = dh(pk(y),x)
+Convergent part: No equation.
+Process 0 (that is, the initial process):
+{1}new siA: exponent;
+{2}let SA: G = pk(siA) in
+{3}new srB: exponent;
+{4}let SB: G = pk(srB) in
+{5}new psk: key;
+{6}out(net, (SA,SB));
+(
+    {7}!
+    {8}let si: exponent = siA in
+    {9}let psk_1: key = psk in
+    {10}event InitiatorBegin(SA,SB);
+    {11}new ei: exponent;
+    {12}let Ei: G = pk(ei) in
+    {13}let ck1: key = kdf1(CK0,g2b(Ei)) in
+    {14}let hi1: bitstring = hT1(SB,Ei) in
+    {15}let es: key = dh(SB,ei) in
+    {16}let ck2: key = kdf2a(ck1,k2b(es)) in
+    {17}let k1: key = kdf2b(ck1,k2b(es)) in
+    {18}let msgStatic: bitstring = aead(k1,zero_nonce,g2b(SA),hi1) in
+    {19}let hi2: bitstring = hT2(SB,Ei,msgStatic) in
+    {20}let ss: key = dh(SB,si) in
+    {21}let ck3: key = kdf2a(ck2,k2b(ss)) in
+    {22}let k2: key = kdf2b(ck2,k2b(ss)) in
+    {23}new tai64n: bitstring;
+    {24}let msgTs: bitstring = aead(k2,zero_nonce,tai64n,hi2) in
+    {25}let hi3: bitstring = hT3(SB,Ei,msgStatic,msgTs) in
+    {26}let mac1: bitstring = mac(hash(concat(LABEL_MAC1,g2b(SB))),concat(g2b(Ei),concat(msgStatic,msgTs))) in
+    {27}out(net, (Ei,msgStatic,msgTs,mac1));
+    {28}in(net, (Er: G,msgEmpty: bitstring,mac1r: bitstring));
+    {29}let ck4: key = kdf1(ck3,g2b(Er)) in
+    {30}let hi4: bitstring = hT4(SB,Ei,msgStatic,msgTs,Er) in
+    {31}let ck5: key = kdf1(ck4,k2b(dh(Er,ei))) in
+    {32}let ck6: key = kdf1(ck5,k2b(dh(Er,si))) in
+    {33}let ck7: key = kdf3a(ck6,k2b(psk_1)) in
+    {34}let tau: key = kdf3b(ck6,k2b(psk_1)) in
+    {35}let k3: key = kdf3c(ck6,k2b(psk_1)) in
+    {36}let hi5: bitstring = hT5(SB,Ei,msgStatic,msgTs,Er,tau) in
+    {37}let =EMPTY = aead_dec(k3,zero_nonce,msgEmpty,hi5) in
+    {38}let tkI: key = kdf2a(ck7,KEMPTY) in
+    {39}let tkR: key = kdf2b(ck7,KEMPTY) in
+    {40}event InitiatorDone(SA,SB,tkI,tkR);
+    {41}out(net, aead(tkI,zero_nonce,witnessI,EMPTY))
+) | (
+    {42}!
+    {43}let sr: exponent = srB in
+    {44}let psk_2: key = psk in
+    {45}in(net, (Ei_1: G,msgStatic_1: bitstring,msgTs_1: bitstring,mac1_1: bitstring));
+    {46}let ck1_1: key = kdf1(CK0,g2b(Ei_1)) in
+    {47}let hr1: bitstring = hT1(SB,Ei_1) in
+    {48}let es_1: key = dh(Ei_1,sr) in
+    {49}let ck2_1: key = kdf2a(ck1_1,k2b(es_1)) in
+    {50}let k1_1: key = kdf2b(ck1_1,k2b(es_1)) in
+    {51}let g2b(Si: G) = aead_dec(k1_1,zero_nonce,msgStatic_1,hr1) in
+    {52}let hr2: bitstring = hT2(SB,Ei_1,msgStatic_1) in
+    {53}let ss_1: key = dh(Si,sr) in
+    {54}let ck3_1: key = kdf2a(ck2_1,k2b(ss_1)) in
+    {55}let k2_1: key = kdf2b(ck2_1,k2b(ss_1)) in
+    {56}let tai64n_1: bitstring = aead_dec(k2_1,zero_nonce,msgTs_1,hr2) in
+    {57}let hr3: bitstring = hT3(SB,Ei_1,msgStatic_1,msgTs_1) in
+    {58}new er: exponent;
+    {59}let Er_1: G = pk(er) in
+    {60}let ck4_1: key = kdf1(ck3_1,g2b(Er_1)) in
+    {61}let hr4: bitstring = hT4(SB,Ei_1,msgStatic_1,msgTs_1,Er_1) in
+    {62}let ck5_1: key = kdf1(ck4_1,k2b(dh(Ei_1,er))) in
+    {63}let ck6_1: key = kdf1(ck5_1,k2b(dh(Si,er))) in
+    {64}let ck7_1: key = kdf3a(ck6_1,k2b(psk_2)) in
+    {65}let tau_1: key = kdf3b(ck6_1,k2b(psk_2)) in
+    {66}let k3_1: key = kdf3c(ck6_1,k2b(psk_2)) in
+    {67}let hr5: bitstring = hT5(SB,Ei_1,msgStatic_1,msgTs_1,Er_1,tau_1) in
+    {68}let msgEmpty_1: bitstring = aead(k3_1,zero_nonce,EMPTY,hr5) in
+    {69}let mac1r_1: bitstring = mac(hash(concat(LABEL_MAC1,g2b(Si))),concat(g2b(Er_1),msgEmpty_1)) in
+    {70}let tkI_1: key = kdf2a(ck7_1,KEMPTY) in
+    {71}let tkR_1: key = kdf2b(ck7_1,KEMPTY) in
+    {72}event ResponderBegin(Si,SB,tkI_1,tkR_1);
+    {73}out(net, (Er_1,msgEmpty_1,mac1r_1));
+    {74}in(net, ct: bitstring);
+    {75}let pt: bitstring = aead_dec(tkI_1,zero_nonce,ct,EMPTY) in
+    {76}event ResponderDone(Si,SB,tkI_1,tkR_1);
+    {77}out(net, aead(tkR_1,zero_nonce,witnessR,EMPTY))
+)
+
+--  Process 1 (that is, process 0, with let moved downwards):
+{1}new siA: exponent;
+{3}new srB: exponent;
+{5}new psk: key;
+{4}let SB: G = pk(srB) in
+{2}let SA: G = pk(siA) in
+{6}out(net, (SA,SB));
+(
+    {7}!
+    {10}event InitiatorBegin(SA,SB);
+    {11}new ei: exponent;
+    {23}new tai64n: bitstring;
+    {8}let si: exponent = siA in
+    {20}let ss: key = dh(SB,si) in
+    {15}let es: key = dh(SB,ei) in
+    {12}let Ei: G = pk(ei) in
+    {13}let ck1: key = kdf1(CK0,g2b(Ei)) in
+    {16}let ck2: key = kdf2a(ck1,k2b(es)) in
+    {22}let k2: key = kdf2b(ck2,k2b(ss)) in
+    {17}let k1: key = kdf2b(ck1,k2b(es)) in
+    {14}let hi1: bitstring = hT1(SB,Ei) in
+    {18}let msgStatic: bitstring = aead(k1,zero_nonce,g2b(SA),hi1) in
+    {19}let hi2: bitstring = hT2(SB,Ei,msgStatic) in
+    {24}let msgTs: bitstring = aead(k2,zero_nonce,tai64n,hi2) in
+    {26}let mac1: bitstring = mac(hash(concat(LABEL_MAC1,g2b(SB))),concat(g2b(Ei),concat(msgStatic,msgTs))) in
+    {27}out(net, (Ei,msgStatic,msgTs,mac1));
+    {28}in(net, (Er: G,msgEmpty: bitstring,mac1r: bitstring));
+    {21}let ck3: key = kdf2a(ck2,k2b(ss)) in
+    {29}let ck4: key = kdf1(ck3,g2b(Er)) in
+    {31}let ck5: key = kdf1(ck4,k2b(dh(Er,ei))) in
+    {32}let ck6: key = kdf1(ck5,k2b(dh(Er,si))) in
+    {9}let psk_1: key = psk in
+    {34}let tau: key = kdf3b(ck6,k2b(psk_1)) in
+    {36}let hi5: bitstring = hT5(SB,Ei,msgStatic,msgTs,Er,tau) in
+    {35}let k3: key = kdf3c(ck6,k2b(psk_1)) in
+    {37}let =EMPTY = aead_dec(k3,zero_nonce,msgEmpty,hi5) in
+    {33}let ck7: key = kdf3a(ck6,k2b(psk_1)) in
+    {39}let tkR: key = kdf2b(ck7,KEMPTY) in
+    {38}let tkI: key = kdf2a(ck7,KEMPTY) in
+    {40}event InitiatorDone(SA,SB,tkI,tkR);
+    {41}out(net, aead(tkI,zero_nonce,witnessI,EMPTY))
+) | (
+    {42}!
+    {45}in(net, (Ei_1: G,msgStatic_1: bitstring,msgTs_1: bitstring,mac1_1: bitstring));
+    {43}let sr: exponent = srB in
+    {48}let es_1: key = dh(Ei_1,sr) in
+    {46}let ck1_1: key = kdf1(CK0,g2b(Ei_1)) in
+    {50}let k1_1: key = kdf2b(ck1_1,k2b(es_1)) in
+    {47}let hr1: bitstring = hT1(SB,Ei_1) in
+    {51}let g2b(Si: G) = aead_dec(k1_1,zero_nonce,msgStatic_1,hr1) in
+    {53}let ss_1: key = dh(Si,sr) in
+    {49}let ck2_1: key = kdf2a(ck1_1,k2b(es_1)) in
+    {55}let k2_1: key = kdf2b(ck2_1,k2b(ss_1)) in
+    {52}let hr2: bitstring = hT2(SB,Ei_1,msgStatic_1) in
+    {56}let tai64n_1: bitstring = aead_dec(k2_1,zero_nonce,msgTs_1,hr2) in
+    {58}new er: exponent;
+    {59}let Er_1: G = pk(er) in
+    {54}let ck3_1: key = kdf2a(ck2_1,k2b(ss_1)) in
+    {60}let ck4_1: key = kdf1(ck3_1,g2b(Er_1)) in
+    {62}let ck5_1: key = kdf1(ck4_1,k2b(dh(Ei_1,er))) in
+    {63}let ck6_1: key = kdf1(ck5_1,k2b(dh(Si,er))) in
+    {44}let psk_2: key = psk in
+    {64}let ck7_1: key = kdf3a(ck6_1,k2b(psk_2)) in
+    {71}let tkR_1: key = kdf2b(ck7_1,KEMPTY) in
+    {70}let tkI_1: key = kdf2a(ck7_1,KEMPTY) in
+    {72}event ResponderBegin(Si,SB,tkI_1,tkR_1);
+    {65}let tau_1: key = kdf3b(ck6_1,k2b(psk_2)) in
+    {67}let hr5: bitstring = hT5(SB,Ei_1,msgStatic_1,msgTs_1,Er_1,tau_1) in
+    {66}let k3_1: key = kdf3c(ck6_1,k2b(psk_2)) in
+    {68}let msgEmpty_1: bitstring = aead(k3_1,zero_nonce,EMPTY,hr5) in
+    {69}let mac1r_1: bitstring = mac(hash(concat(LABEL_MAC1,g2b(Si))),concat(g2b(Er_1),msgEmpty_1)) in
+    {73}out(net, (Er_1,msgEmpty_1,mac1r_1));
+    {74}in(net, ct: bitstring);
+    {75}let pt: bitstring = aead_dec(tkI_1,zero_nonce,ct,EMPTY) in
+    {76}event ResponderDone(Si,SB,tkI_1,tkR_1);
+    {77}out(net, aead(tkR_1,zero_nonce,witnessR,EMPTY))
+)
+
+-- Query event(InitiatorDone(si_1,sr_1,ki,kr)) ==> event(ResponderBegin(si_1,sr_1,ki,kr)) in process 1.
+Translating the process into Horn clauses...
+Completing...
+200 rules inserted. Base: 195 rules (49 with conclusion selected). Queue: 148 rules.
+400 rules inserted. Base: 290 rules (49 with conclusion selected). Queue: 169 rules.
+600 rules inserted. Base: 453 rules (70 with conclusion selected). Queue: 196 rules.
+800 rules inserted. Base: 593 rules (92 with conclusion selected). Queue: 185 rules.
+1000 rules inserted. Base: 706 rules (121 with conclusion selected). Queue: 180 rules.

@@ -1,0 +1,30 @@
+(* P6 -- key-compromise impersonation, responder side.
+   The responder's own long-term scalar is handed to the attacker from the
+   outset.  The question is whether that lets the attacker impersonate a
+   third party TO the responder.
+
+   The property is split across 25a and 25b because the two levels separate
+   at exactly the point that matters.  Producing a well-formed message 1
+   needs only es = DH(ei, Sr) and ss = DH(Si, Sr), both computable from the
+   leaked responder scalar.  Completing the session additionally needs
+   se = DH(Si, er), which requires the initiator's scalar.  WireGuard's KCI
+   resistance lives in the gap between the two.
+
+   25b asks the operative question: has the responder accepted a transport
+   record under those keys, that is, is the session usable? *)
+
+query si: G, sr: G, ki: key, kr: key;
+      event(ResponderDone(si, sr, ki, kr)) ==> event(InitiatorBegin(si, sr)).
+
+process
+  new siA: exponent; let SA = pk(siA) in
+  new srB: exponent; let SB = pk(srB) in
+  new psk: key;
+  (* The responder's own static scalar is compromised. *)
+  out(net, (SA, SB, srB));
+  (* Bounded to a single initiator session.  With the responder scalar
+     in the attacker's hands, unbounded replication exceeds the memory budget
+     (documented in docs/model-notes.md).  One initiator session suffices to
+     exhibit any impersonation that reuses a single honest run, and the bound
+     is stated alongside the result rather than hidden. *)
+  ( Initiator(siA, SA, SB, psk) | (!Responder(srB, SB, psk)) )

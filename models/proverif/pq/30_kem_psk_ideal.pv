@@ -1,0 +1,52 @@
+(* ------------------------------------------------------------------------- *)
+(* Post-quantum psk establishment with a KEM that binds the shared secret to  *)
+(* the encapsulation key.                                                     *)
+(*                                                                           *)
+(* Construction under test (the Rosenpass shape, reduced to its essential     *)
+(* step): the initiator encapsulates against the responder's KEM public key   *)
+(* and both sides use the resulting shared secret as the WireGuard psk.       *)
+(*                                                                           *)
+(* The property that matters is not secrecy of the shared secret -- an        *)
+(* ordinary KEM gives that -- but agreement: both parties must end up with    *)
+(* the same psk AND the same view of whose psk it is.  If they do not, the    *)
+(* psk authenticates nobody and the post-quantum guarantee of Section V       *)
+(* evaporates even though every primitive remained unbroken.                  *)
+(* ------------------------------------------------------------------------- *)
+
+free netk: channel.
+
+event PskInitiator(kempk, key).   (* initiator's view: peer encap key, psk *)
+event PskResponder(kempk, key).   (* responder's view: own  encap key, psk *)
+
+free pskWitness: bitstring [private].
+
+(* Secrecy of the established psk. *)
+query attacker(pskWitness).
+
+(* Soundness of the responder's view.  A bare KEM encapsulation authenticates
+   nobody -- anyone holding the public encapsulation key can send a well-formed
+   ciphertext -- so the honest statement is disjunctive: any psk the responder
+   accepts was either produced by the honest initiator for that same key, or is
+   already known to the attacker because the attacker produced it itself.  A
+   KEM that fails this has lost more than authentication. *)
+query p: kempk, k: key;
+      event(PskResponder(p, k)) ==> (event(PskInitiator(p, k)) || attacker(k)).
+
+let KemInitiator(peerPk: kempk) =
+    new r: bitstring;
+    let ct = encap(peerPk, r) in
+    let psk = kemss(peerPk, r) in
+    event PskInitiator(peerPk, psk);
+    out(netk, ct);
+    out(netk, aead(psk, zero_nonce, pskWitness, EMPTY)).
+
+let KemResponder(sk: kemsk) =
+    in(netk, (ct: kemct));
+    let psk = decap(sk, ct) in
+    event PskResponder(kempub(sk), psk).
+
+process
+  new skR: kemsk;
+  let pkR = kempub(skR) in
+  out(netk, pkR);
+  ( (!KemInitiator(pkR)) | (!KemResponder(skR)) )

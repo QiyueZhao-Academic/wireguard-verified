@@ -1,0 +1,14 @@
+\begin{tabular}{@{}rrll@{}}
+\toprule
+Off & Len & Field & Model term \\
+\midrule
+0 & 1 & \texttt{message\_type} & \textcolor{black!45}{---} \\
+1 & 3 & \texttt{reserved} & \textcolor{black!45}{---} \\
+4 & 4 & \texttt{sender\_index} & \textcolor{black!45}{---} \\
+8 & 4 & \texttt{receiver\_index} & \textcolor{black!45}{---} \\
+12 & 32 & \texttt{unencrypted\_ephemeral} & $E_r=\mathit{pk}(e_r)$ \\
+44 & 16 & \texttt{encrypted\_nothing} & $\mathrm{aead}(k_3,0,\varepsilon,h_5)$ \\
+60 & 16 & \texttt{mac1} & $\mathrm{mac}(H(L\|S_i),\cdot)$ \\
+76 & 16 & \texttt{mac2} & \textcolor{black!45}{---} \\
+\bottomrule
+\end{tabular}

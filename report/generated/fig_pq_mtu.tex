@@ -1,0 +1,24 @@
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \footnotesize
+  \fill[okgreen!78] (0,-0.22) rectangle (0.608,0.22);
+  \node[anchor=east] at (-0.12,-0.0) {X25519 (baseline)};
+  \node[anchor=west] at (0.728,-0.0) {\bfseries 148\,B};
+  \fill[okgreen!78] (0,-0.97) rectangle (3.766,-0.53);
+  \node[anchor=east] at (-0.12,-0.75) {ML-KEM-512};
+  \node[anchor=west] at (3.886,-0.75) {\bfseries 916\,B};
+  \fill[badred!78] (0,-1.72) rectangle (5.344,-1.28);
+  \node[anchor=east] at (-0.12,-1.5) {ML-KEM-768};
+  \node[anchor=west] at (5.464,-1.5) {\bfseries 1300\,B};
+  \fill[badred!78] (0,-2.47) rectangle (6.923,-2.03);
+  \node[anchor=east] at (-0.12,-2.25) {ML-KEM-1024};
+  \node[anchor=west] at (7.043,-2.25) {\bfseries 1684\,B};
+  \draw[badred,dashed,thick] (5.065,-2.75) -- (5.065,0.78);
+  \node[badred,anchor=east,inner sep=2pt,font=\scriptsize,font=\scriptsize\bfseries] at (5.065,0.78) {IPv6 minimum MTU: 1232\,B};
+  \draw[black!55,dashed,thin] (6.052,-2.75) -- (6.052,1.22);
+  \node[black!55,anchor=west,inner sep=2pt,font=\scriptsize] at (6.052,1.22) {Ethernet, IPv4: 1472\,B};
+  \draw[->] (0,-3.1) -- (7.400,-3.1) node[anchor=west] {\scriptsize bytes};
+  \draw (0.000,-3.2) -- (0.000,-3.0) node[anchor=north,yshift=-4pt] {\scriptsize 0};
+  \draw (2.467,-3.2) -- (2.467,-3.0) node[anchor=north,yshift=-4pt] {\scriptsize 600};
+  \draw (4.933,-3.2) -- (4.933,-3.0) node[anchor=north,yshift=-4pt] {\scriptsize 1200};
+  \draw (7.400,-3.2) -- (7.400,-3.0) node[anchor=north,yshift=-4pt] {\scriptsize 1800};
+\end{tikzpicture}

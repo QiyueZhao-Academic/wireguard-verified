@@ -1,0 +1,21 @@
+(* P3 -- forward secrecy.
+   Sessions run in phase 0.  In phase 1 both long-term static scalars are
+   handed to the attacker.  Forward secrecy holds if transport keys agreed
+   before the compromise remain out of reach afterwards.
+
+   The property rests on the ephemeral-ephemeral term ee = DH(ei, er), which
+   no static key recovers. *)
+
+query attacker(witnessI);
+      attacker(witnessR).
+
+process
+  new siA: exponent; let SA = pk(siA) in
+  new srB: exponent; let SB = pk(srB) in
+  new psk: key;
+  out(net, (SA, SB));
+  ( (!Initiator(siA, SA, SB, psk))
+  | (!Responder(srB, SB, psk))
+    (* Long-term compromise, strictly after every phase-0 session. *)
+  | (phase 1; out(net, (siA, srB)))
+  )

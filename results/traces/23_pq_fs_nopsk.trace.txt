@@ -1,0 +1,222 @@
+goal reachable: attacker_p1(witnessI[])
+
+Derivation:
+Abbreviations:
+ei_1 = ei[!1 = @sid]
+tai64n_2 = tai64n[!1 = @sid]
+er_1 = er[mac1_1 = mac1_2,msgTs_1 = aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),msgStatic_1 = aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),Ei_1 = pk(ei_1),!1 = @sid_1]
+
+1. Using the function EMPTY the attacker may obtain EMPTY in phase 1.
+attacker_p1(EMPTY).
+
+2. The attacker has some term mac1r_2.
+attacker(mac1r_2).
+
+3. The attacker has some term mac1_2.
+attacker(mac1_2).
+
+4. The message (pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac(hash(concat(LABEL_MAC1,g2b(pk(srB[])))),concat(g2b(pk(ei_1)),concat(aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))))))) may be sent to the attacker at output {27}.
+attacker((pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac(hash(concat(LABEL_MAC1,g2b(pk(srB[])))),concat(g2b(pk(ei_1)),concat(aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1)))))))))).
+
+5. By 4, the attacker may know (pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac(hash(concat(LABEL_MAC1,g2b(pk(srB[])))),concat(g2b(pk(ei_1)),concat(aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))))))).
+Using the function 3-proj-4-tuple the attacker may obtain aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))).
+attacker(aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1)))))).
+
+6. The message (pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac(hash(concat(LABEL_MAC1,g2b(pk(srB[])))),concat(g2b(pk(ei_1)),concat(aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))))))) may be sent to the attacker at output {27}.
+attacker((pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac(hash(concat(LABEL_MAC1,g2b(pk(srB[])))),concat(g2b(pk(ei_1)),concat(aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1)))))))))).
+
+7. By 6, the attacker may know (pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac(hash(concat(LABEL_MAC1,g2b(pk(srB[])))),concat(g2b(pk(ei_1)),concat(aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))))))).
+Using the function 2-proj-4-tuple the attacker may obtain aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))).
+attacker(aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1)))).
+
+8. The message (pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac(hash(concat(LABEL_MAC1,g2b(pk(srB[])))),concat(g2b(pk(ei_1)),concat(aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))))))) may be sent to the attacker at output {27}.
+attacker((pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac(hash(concat(LABEL_MAC1,g2b(pk(srB[])))),concat(g2b(pk(ei_1)),concat(aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1)))))))))).
+
+9. By 8, the attacker may know (pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac(hash(concat(LABEL_MAC1,g2b(pk(srB[])))),concat(g2b(pk(ei_1)),concat(aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))))))).
+Using the function 1-proj-4-tuple the attacker may obtain pk(ei_1).
+attacker(pk(ei_1)).
+
+10. By 9, the attacker may know pk(ei_1).
+By 7, the attacker may know aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))).
+By 5, the attacker may know aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))).
+By 3, the attacker may know mac1_2.
+Using the function 4-tuple the attacker may obtain (pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac1_2).
+attacker((pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac1_2)).
+
+11. The message (pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),mac1_2) that the attacker may have by 10 may be received at input {45}.
+So the message (pk(er_1),aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])))),mac(hash(concat(LABEL_MAC1,g2b(pk(siA[])))),concat(g2b(pk(er_1)),aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[]))))))) may be sent to the attacker at output {73}.
+attacker((pk(er_1),aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])))),mac(hash(concat(LABEL_MAC1,g2b(pk(siA[])))),concat(g2b(pk(er_1)),aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])))))))).
+
+12. By 11, the attacker may know (pk(er_1),aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])))),mac(hash(concat(LABEL_MAC1,g2b(pk(siA[])))),concat(g2b(pk(er_1)),aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[]))))))).
+Using the function 2-proj-3-tuple the attacker may obtain aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])))).
+attacker(aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[]))))).
+
+13. By 11, the attacker may know (pk(er_1),aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])))),mac(hash(concat(LABEL_MAC1,g2b(pk(siA[])))),concat(g2b(pk(er_1)),aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[]))))))).
+Using the function 1-proj-3-tuple the attacker may obtain pk(er_1).
+attacker(pk(er_1)).
+
+14. By 13, the attacker may know pk(er_1).
+By 12, the attacker may know aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])))).
+By 2, the attacker may know mac1r_2.
+Using the function 3-tuple the attacker may obtain (pk(er_1),aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])))),mac1r_2).
+attacker((pk(er_1),aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])))),mac1r_2)).
+
+15. The message (pk(er_1),aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),zero_nonce,EMPTY,hT5(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),pk(er_1),kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])))),mac1r_2) that the attacker may have by 14 may be received at input {28}.
+So the message aead(kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),KEMPTY),zero_nonce,witnessI[],EMPTY) may be sent to the attacker at output {41}.
+attacker(aead(kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),KEMPTY),zero_nonce,witnessI[],EMPTY)).
+
+16. By 15, the attacker may know aead(kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),KEMPTY),zero_nonce,witnessI[],EMPTY).
+So the attacker may know aead(kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),KEMPTY),zero_nonce,witnessI[],EMPTY) in phase 1.
+attacker_p1(aead(kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),KEMPTY),zero_nonce,witnessI[],EMPTY)).
+
+17. Using the function zero_nonce the attacker may obtain zero_nonce in phase 1.
+attacker_p1(zero_nonce).
+
+18. Using the function KEMPTY the attacker may obtain KEMPTY in phase 1.
+attacker_p1(KEMPTY).
+
+19. The message (pk(siA[]),pk(srB[]),psk[]) may be sent to the attacker at output {6}.
+attacker((pk(siA[]),pk(srB[]),psk[])).
+
+20. By 19, the attacker may know (pk(siA[]),pk(srB[]),psk[]).
+Using the function 3-proj-3-tuple the attacker may obtain psk[].
+attacker(psk[]).
+
+21. By 20, the attacker may know psk[].
+So the attacker may know psk[] in phase 1.
+attacker_p1(psk[]).
+
+22. By 21, the attacker may know psk[] in phase 1.
+Using the function k2b the attacker may obtain k2b(psk[]) in phase 1.
+attacker_p1(k2b(psk[])).
+
+23. By 13, the attacker may know pk(er_1).
+So the attacker may know pk(er_1) in phase 1.
+attacker_p1(pk(er_1)).
+
+24. The message pk(er_1) that the attacker may have in phase 1 by 23 may be received at input {80}.
+So the message er_1 may be sent to the attacker in phase 1 at output {81}.
+attacker_p1(er_1).
+
+25. By 19, the attacker may know (pk(siA[]),pk(srB[]),psk[]).
+Using the function 1-proj-3-tuple the attacker may obtain pk(siA[]).
+attacker(pk(siA[])).
+
+26. By 25, the attacker may know pk(siA[]).
+So the attacker may know pk(siA[]) in phase 1.
+attacker_p1(pk(siA[])).
+
+27. By 26, the attacker may know pk(siA[]) in phase 1.
+By 24, the attacker may know er_1 in phase 1.
+Using the function dh the attacker may obtain dh(pk(er_1),siA[]) in phase 1.
+attacker_p1(dh(pk(er_1),siA[])).
+
+28. By 27, the attacker may know dh(pk(er_1),siA[]) in phase 1.
+Using the function k2b the attacker may obtain k2b(dh(pk(er_1),siA[])) in phase 1.
+attacker_p1(k2b(dh(pk(er_1),siA[]))).
+
+29. By 9, the attacker may know pk(ei_1).
+So the attacker may know pk(ei_1) in phase 1.
+attacker_p1(pk(ei_1)).
+
+30. By 29, the attacker may know pk(ei_1) in phase 1.
+By 24, the attacker may know er_1 in phase 1.
+Using the function dh the attacker may obtain dh(pk(er_1),ei_1) in phase 1.
+attacker_p1(dh(pk(er_1),ei_1)).
+
+31. By 30, the attacker may know dh(pk(er_1),ei_1) in phase 1.
+Using the function k2b the attacker may obtain k2b(dh(pk(er_1),ei_1)) in phase 1.
+attacker_p1(k2b(dh(pk(er_1),ei_1))).
+
+32. By 23, the attacker may know pk(er_1) in phase 1.
+Using the function g2b the attacker may obtain g2b(pk(er_1)) in phase 1.
+attacker_p1(g2b(pk(er_1))).
+
+33. By 19, the attacker may know (pk(siA[]),pk(srB[]),psk[]).
+Using the function 2-proj-3-tuple the attacker may obtain pk(srB[]).
+attacker(pk(srB[])).
+
+34. By 33, the attacker may know pk(srB[]).
+So the attacker may know pk(srB[]) in phase 1.
+attacker_p1(pk(srB[])).
+
+35. The message pk(srB[]) that the attacker may have in phase 1 by 34 may be received at input {80}.
+So the message srB[] may be sent to the attacker in phase 1 at output {81}.
+attacker_p1(srB[]).
+
+36. By 26, the attacker may know pk(siA[]) in phase 1.
+By 35, the attacker may know srB[] in phase 1.
+Using the function dh the attacker may obtain dh(pk(srB[]),siA[]) in phase 1.
+attacker_p1(dh(pk(srB[]),siA[])).
+
+37. By 36, the attacker may know dh(pk(srB[]),siA[]) in phase 1.
+Using the function k2b the attacker may obtain k2b(dh(pk(srB[]),siA[])) in phase 1.
+attacker_p1(k2b(dh(pk(srB[]),siA[]))).
+
+38. By 29, the attacker may know pk(ei_1) in phase 1.
+By 35, the attacker may know srB[] in phase 1.
+Using the function dh the attacker may obtain dh(pk(srB[]),ei_1) in phase 1.
+attacker_p1(dh(pk(srB[]),ei_1)).
+
+39. By 38, the attacker may know dh(pk(srB[]),ei_1) in phase 1.
+Using the function k2b the attacker may obtain k2b(dh(pk(srB[]),ei_1)) in phase 1.
+attacker_p1(k2b(dh(pk(srB[]),ei_1))).
+
+40. By 29, the attacker may know pk(ei_1) in phase 1.
+Using the function g2b the attacker may obtain g2b(pk(ei_1)) in phase 1.
+attacker_p1(g2b(pk(ei_1))).
+
+41. Using the function CK0 the attacker may obtain CK0 in phase 1.
+attacker_p1(CK0).
+
+42. By 41, the attacker may know CK0 in phase 1.
+By 40, the attacker may know g2b(pk(ei_1)) in phase 1.
+Using the function kdf1 the attacker may obtain kdf1(CK0,g2b(pk(ei_1))) in phase 1.
+attacker_p1(kdf1(CK0,g2b(pk(ei_1)))).
+
+43. By 42, the attacker may know kdf1(CK0,g2b(pk(ei_1))) in phase 1.
+By 39, the attacker may know k2b(dh(pk(srB[]),ei_1)) in phase 1.
+Using the function kdf2a the attacker may obtain kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))) in phase 1.
+attacker_p1(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1)))).
+
+44. By 43, the attacker may know kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))) in phase 1.
+By 37, the attacker may know k2b(dh(pk(srB[]),siA[])) in phase 1.
+Using the function kdf2a the attacker may obtain kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))) in phase 1.
+attacker_p1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[])))).
+
+45. By 44, the attacker may know kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))) in phase 1.
+By 32, the attacker may know g2b(pk(er_1)) in phase 1.
+Using the function kdf1 the attacker may obtain kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))) in phase 1.
+attacker_p1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1)))).
+
+46. By 45, the attacker may know kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))) in phase 1.
+By 31, the attacker may know k2b(dh(pk(er_1),ei_1)) in phase 1.
+Using the function kdf1 the attacker may obtain kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))) in phase 1.
+attacker_p1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1)))).
+
+47. By 46, the attacker may know kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))) in phase 1.
+By 28, the attacker may know k2b(dh(pk(er_1),siA[])) in phase 1.
+Using the function kdf1 the attacker may obtain kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))) in phase 1.
+attacker_p1(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[])))).
+
+48. By 47, the attacker may know kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))) in phase 1.
+By 22, the attacker may know k2b(psk[]) in phase 1.
+Using the function kdf3a the attacker may obtain kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])) in phase 1.
+attacker_p1(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[]))).
+
+49. By 48, the attacker may know kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])) in phase 1.
+By 18, the attacker may know KEMPTY in phase 1.
+Using the function kdf2a the attacker may obtain kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),KEMPTY) in phase 1.
+attacker_p1(kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),KEMPTY)).
+
+50. By 49, the attacker may know kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),KEMPTY) in phase 1.
+By 17, the attacker may know zero_nonce in phase 1.
+By 16, the attacker may know aead(kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(srB[]),ei_1))),k2b(dh(pk(srB[]),siA[]))),g2b(pk(er_1))),k2b(dh(pk(er_1),ei_1))),k2b(dh(pk(er_1),siA[]))),k2b(psk[])),KEMPTY),zero_nonce,witnessI[],EMPTY) in phase 1.
+By 1, the attacker may know EMPTY in phase 1.
+Using the function aead_dec the attacker may obtain witnessI[] in phase 1.
+attacker_p1(witnessI[]).
+
+51. By 50, attacker_p1(witnessI[]).
+The goal is reached, represented in the following fact:
+attacker_p1(witnessI[]).
+

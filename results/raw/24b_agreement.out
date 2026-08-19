@@ -1,0 +1,261 @@
+Linear part:
+dh(pk(x),y) = dh(pk(y),x)
+Completing equations...
+Completed equations:
+dh(pk(x),y) = dh(pk(y),x)
+Convergent part: No equation.
+Process 0 (that is, the initial process):
+{1}new siA: exponent;
+{2}let SA: G = pk(siA) in
+{3}new srB: exponent;
+{4}let SB: G = pk(srB) in
+{5}new psk: key;
+{6}out(net, (SA,SB));
+(
+    {7}!
+    {8}let si: exponent = siA in
+    {9}let psk_1: key = psk in
+    {10}event InitiatorBegin(SA,SB);
+    {11}new ei: exponent;
+    {12}let Ei: G = pk(ei) in
+    {13}let ck1: key = kdf1(CK0,g2b(Ei)) in
+    {14}let hi1: bitstring = hT1(SB,Ei) in
+    {15}let es: key = dh(SB,ei) in
+    {16}let ck2: key = kdf2a(ck1,k2b(es)) in
+    {17}let k1: key = kdf2b(ck1,k2b(es)) in
+    {18}let msgStatic: bitstring = aead(k1,zero_nonce,g2b(SA),hi1) in
+    {19}let hi2: bitstring = hT2(SB,Ei,msgStatic) in
+    {20}let ss: key = dh(SB,si) in
+    {21}let ck3: key = kdf2a(ck2,k2b(ss)) in
+    {22}let k2: key = kdf2b(ck2,k2b(ss)) in
+    {23}new tai64n: bitstring;
+    {24}let msgTs: bitstring = aead(k2,zero_nonce,tai64n,hi2) in
+    {25}let hi3: bitstring = hT3(SB,Ei,msgStatic,msgTs) in
+    {26}let mac1: bitstring = mac(hash(concat(LABEL_MAC1,g2b(SB))),concat(g2b(Ei),concat(msgStatic,msgTs))) in
+    {27}out(net, (Ei,msgStatic,msgTs,mac1));
+    {28}in(net, (Er: G,msgEmpty: bitstring,mac1r: bitstring));
+    {29}let ck4: key = kdf1(ck3,g2b(Er)) in
+    {30}let hi4: bitstring = hT4(SB,Ei,msgStatic,msgTs,Er) in
+    {31}let ck5: key = kdf1(ck4,k2b(dh(Er,ei))) in
+    {32}let ck6: key = kdf1(ck5,k2b(dh(Er,si))) in
+    {33}let ck7: key = kdf3a(ck6,k2b(psk_1)) in
+    {34}let tau: key = kdf3b(ck6,k2b(psk_1)) in
+    {35}let k3: key = kdf3c(ck6,k2b(psk_1)) in
+    {36}let hi5: bitstring = hT5(SB,Ei,msgStatic,msgTs,Er,tau) in
+    {37}let =EMPTY = aead_dec(k3,zero_nonce,msgEmpty,hi5) in
+    {38}let tkI: key = kdf2a(ck7,KEMPTY) in
+    {39}let tkR: key = kdf2b(ck7,KEMPTY) in
+    {40}event InitiatorDone(SA,SB,tkI,tkR);
+    {41}out(net, aead(tkI,zero_nonce,witnessI,EMPTY))
+) | (
+    {42}!
+    {43}let sr: exponent = srB in
+    {44}let psk_2: key = psk in
+    {45}in(net, (Ei_1: G,msgStatic_1: bitstring,msgTs_1: bitstring,mac1_1: bitstring));
+    {46}let ck1_1: key = kdf1(CK0,g2b(Ei_1)) in
+    {47}let hr1: bitstring = hT1(SB,Ei_1) in
+    {48}let es_1: key = dh(Ei_1,sr) in
+    {49}let ck2_1: key = kdf2a(ck1_1,k2b(es_1)) in
+    {50}let k1_1: key = kdf2b(ck1_1,k2b(es_1)) in
+    {51}let g2b(Si: G) = aead_dec(k1_1,zero_nonce,msgStatic_1,hr1) in
+    {52}let hr2: bitstring = hT2(SB,Ei_1,msgStatic_1) in
+    {53}let ss_1: key = dh(Si,sr) in
+    {54}let ck3_1: key = kdf2a(ck2_1,k2b(ss_1)) in
+    {55}let k2_1: key = kdf2b(ck2_1,k2b(ss_1)) in
+    {56}let tai64n_1: bitstring = aead_dec(k2_1,zero_nonce,msgTs_1,hr2) in
+    {57}let hr3: bitstring = hT3(SB,Ei_1,msgStatic_1,msgTs_1) in
+    {58}new er: exponent;
+    {59}let Er_1: G = pk(er) in
+    {60}let ck4_1: key = kdf1(ck3_1,g2b(Er_1)) in
+    {61}let hr4: bitstring = hT4(SB,Ei_1,msgStatic_1,msgTs_1,Er_1) in
+    {62}let ck5_1: key = kdf1(ck4_1,k2b(dh(Ei_1,er))) in
+    {63}let ck6_1: key = kdf1(ck5_1,k2b(dh(Si,er))) in
+    {64}let ck7_1: key = kdf3a(ck6_1,k2b(psk_2)) in
+    {65}let tau_1: key = kdf3b(ck6_1,k2b(psk_2)) in
+    {66}let k3_1: key = kdf3c(ck6_1,k2b(psk_2)) in
+    {67}let hr5: bitstring = hT5(SB,Ei_1,msgStatic_1,msgTs_1,Er_1,tau_1) in
+    {68}let msgEmpty_1: bitstring = aead(k3_1,zero_nonce,EMPTY,hr5) in
+    {69}let mac1r_1: bitstring = mac(hash(concat(LABEL_MAC1,g2b(Si))),concat(g2b(Er_1),msgEmpty_1)) in
+    {70}let tkI_1: key = kdf2a(ck7_1,KEMPTY) in
+    {71}let tkR_1: key = kdf2b(ck7_1,KEMPTY) in
+    {72}event ResponderBegin(Si,SB,tkI_1,tkR_1);
+    {73}out(net, (Er_1,msgEmpty_1,mac1r_1));
+    {74}in(net, ct: bitstring);
+    {75}let pt: bitstring = aead_dec(tkI_1,zero_nonce,ct,EMPTY) in
+    {76}event ResponderDone(Si,SB,tkI_1,tkR_1);
+    {77}out(net, aead(tkR_1,zero_nonce,witnessR,EMPTY))
+)
+
+--  Process 1 (that is, process 0, with let moved downwards):
+{1}new siA: exponent;
+{3}new srB: exponent;
+{5}new psk: key;
+{4}let SB: G = pk(srB) in
+{2}let SA: G = pk(siA) in
+{6}out(net, (SA,SB));
+(
+    {7}!
+    {10}event InitiatorBegin(SA,SB);
+    {11}new ei: exponent;
+    {23}new tai64n: bitstring;
+    {8}let si: exponent = siA in
+    {20}let ss: key = dh(SB,si) in
+    {15}let es: key = dh(SB,ei) in
+    {12}let Ei: G = pk(ei) in
+    {13}let ck1: key = kdf1(CK0,g2b(Ei)) in
+    {16}let ck2: key = kdf2a(ck1,k2b(es)) in
+    {22}let k2: key = kdf2b(ck2,k2b(ss)) in
+    {17}let k1: key = kdf2b(ck1,k2b(es)) in
+    {14}let hi1: bitstring = hT1(SB,Ei) in
+    {18}let msgStatic: bitstring = aead(k1,zero_nonce,g2b(SA),hi1) in
+    {19}let hi2: bitstring = hT2(SB,Ei,msgStatic) in
+    {24}let msgTs: bitstring = aead(k2,zero_nonce,tai64n,hi2) in
+    {26}let mac1: bitstring = mac(hash(concat(LABEL_MAC1,g2b(SB))),concat(g2b(Ei),concat(msgStatic,msgTs))) in
+    {27}out(net, (Ei,msgStatic,msgTs,mac1));
+    {28}in(net, (Er: G,msgEmpty: bitstring,mac1r: bitstring));
+    {21}let ck3: key = kdf2a(ck2,k2b(ss)) in
+    {29}let ck4: key = kdf1(ck3,g2b(Er)) in
+    {31}let ck5: key = kdf1(ck4,k2b(dh(Er,ei))) in
+    {32}let ck6: key = kdf1(ck5,k2b(dh(Er,si))) in
+    {9}let psk_1: key = psk in
+    {34}let tau: key = kdf3b(ck6,k2b(psk_1)) in
+    {36}let hi5: bitstring = hT5(SB,Ei,msgStatic,msgTs,Er,tau) in
+    {35}let k3: key = kdf3c(ck6,k2b(psk_1)) in
+    {37}let =EMPTY = aead_dec(k3,zero_nonce,msgEmpty,hi5) in
+    {33}let ck7: key = kdf3a(ck6,k2b(psk_1)) in
+    {39}let tkR: key = kdf2b(ck7,KEMPTY) in
+    {38}let tkI: key = kdf2a(ck7,KEMPTY) in
+    {40}event InitiatorDone(SA,SB,tkI,tkR);
+    {41}out(net, aead(tkI,zero_nonce,witnessI,EMPTY))
+) | (
+    {42}!
+    {45}in(net, (Ei_1: G,msgStatic_1: bitstring,msgTs_1: bitstring,mac1_1: bitstring));
+    {43}let sr: exponent = srB in
+    {48}let es_1: key = dh(Ei_1,sr) in
+    {46}let ck1_1: key = kdf1(CK0,g2b(Ei_1)) in
+    {50}let k1_1: key = kdf2b(ck1_1,k2b(es_1)) in
+    {47}let hr1: bitstring = hT1(SB,Ei_1) in
+    {51}let g2b(Si: G) = aead_dec(k1_1,zero_nonce,msgStatic_1,hr1) in
+    {53}let ss_1: key = dh(Si,sr) in
+    {49}let ck2_1: key = kdf2a(ck1_1,k2b(es_1)) in
+    {55}let k2_1: key = kdf2b(ck2_1,k2b(ss_1)) in
+    {52}let hr2: bitstring = hT2(SB,Ei_1,msgStatic_1) in
+    {56}let tai64n_1: bitstring = aead_dec(k2_1,zero_nonce,msgTs_1,hr2) in
+    {58}new er: exponent;
+    {59}let Er_1: G = pk(er) in
+    {54}let ck3_1: key = kdf2a(ck2_1,k2b(ss_1)) in
+    {60}let ck4_1: key = kdf1(ck3_1,g2b(Er_1)) in
+    {62}let ck5_1: key = kdf1(ck4_1,k2b(dh(Ei_1,er))) in
+    {63}let ck6_1: key = kdf1(ck5_1,k2b(dh(Si,er))) in
+    {44}let psk_2: key = psk in
+    {64}let ck7_1: key = kdf3a(ck6_1,k2b(psk_2)) in
+    {71}let tkR_1: key = kdf2b(ck7_1,KEMPTY) in
+    {70}let tkI_1: key = kdf2a(ck7_1,KEMPTY) in
+    {72}event ResponderBegin(Si,SB,tkI_1,tkR_1);
+    {65}let tau_1: key = kdf3b(ck6_1,k2b(psk_2)) in
+    {67}let hr5: bitstring = hT5(SB,Ei_1,msgStatic_1,msgTs_1,Er_1,tau_1) in
+    {66}let k3_1: key = kdf3c(ck6_1,k2b(psk_2)) in
+    {68}let msgEmpty_1: bitstring = aead(k3_1,zero_nonce,EMPTY,hr5) in
+    {69}let mac1r_1: bitstring = mac(hash(concat(LABEL_MAC1,g2b(Si))),concat(g2b(Er_1),msgEmpty_1)) in
+    {73}out(net, (Er_1,msgEmpty_1,mac1r_1));
+    {74}in(net, ct: bitstring);
+    {75}let pt: bitstring = aead_dec(tkI_1,zero_nonce,ct,EMPTY) in
+    {76}event ResponderDone(Si,SB,tkI_1,tkR_1);
+    {77}out(net, aead(tkR_1,zero_nonce,witnessR,EMPTY))
+)
+
+-- Query event(ResponderDone(si_1,sr_1,ki,kr)) ==> event(InitiatorBegin(si_1,sr_1)) in process 1.
+Translating the process into Horn clauses...
+Completing...
+200 rules inserted. Base: 186 rules (49 with conclusion selected). Queue: 124 rules.
+400 rules inserted. Base: 303 rules (49 with conclusion selected). Queue: 159 rules.
+600 rules inserted. Base: 475 rules (76 with conclusion selected). Queue: 143 rules.
+800 rules inserted. Base: 613 rules (89 with conclusion selected). Queue: 160 rules.
+1000 rules inserted. Base: 730 rules (95 with conclusion selected). Queue: 356 rules.
+1200 rules inserted. Base: 841 rules (95 with conclusion selected). Queue: 630 rules.
+1400 rules inserted. Base: 924 rules (95 with conclusion selected). Queue: 807 rules.
+1600 rules inserted. Base: 947 rules (95 with conclusion selected). Queue: 856 rules.
+1800 rules inserted. Base: 972 rules (95 with conclusion selected). Queue: 902 rules.
+2000 rules inserted. Base: 983 rules (95 with conclusion selected). Queue: 937 rules.
+2200 rules inserted. Base: 1003 rules (95 with conclusion selected). Queue: 944 rules.
+2400 rules inserted. Base: 1171 rules (99 with conclusion selected). Queue: 929 rules.
+2600 rules inserted. Base: 1341 rules (105 with conclusion selected). Queue: 930 rules.
+2800 rules inserted. Base: 1467 rules (113 with conclusion selected). Queue: 844 rules.
+3000 rules inserted. Base: 1596 rules (121 with conclusion selected). Queue: 739 rules.
+3200 rules inserted. Base: 1737 rules (127 with conclusion selected). Queue: 659 rules.
+3400 rules inserted. Base: 1779 rules (127 with conclusion selected). Queue: 815 rules.
+3600 rules inserted. Base: 1809 rules (127 with conclusion selected). Queue: 851 rules.
+3800 rules inserted. Base: 1853 rules (127 with conclusion selected). Queue: 813 rules.
+select attacker(pk(x))/-5000
+4000 rules inserted. Base: 1869 rules (130 with conclusion selected). Queue: 814 rules.
+4200 rules inserted. Base: 1883 rules (133 with conclusion selected). Queue: 801 rules.
+4400 rules inserted. Base: 1909 rules (138 with conclusion selected). Queue: 779 rules.
+4600 rules inserted. Base: 2018 rules (163 with conclusion selected). Queue: 718 rules.
+4800 rules inserted. Base: 2111 rules (164 with conclusion selected). Queue: 844 rules.
+5000 rules inserted. Base: 2192 rules (164 with conclusion selected). Queue: 764 rules.
+5200 rules inserted. Base: 2304 rules (165 with conclusion selected). Queue: 847 rules.
+5400 rules inserted. Base: 2458 rules (167 with conclusion selected). Queue: 1108 rules.
+5600 rules inserted. Base: 2508 rules (167 with conclusion selected). Queue: 1441 rules.
+5800 rules inserted. Base: 2708 rules (167 with conclusion selected). Queue: 1244 rules.
+6000 rules inserted. Base: 2768 rules (167 with conclusion selected). Queue: 1355 rules.
+6200 rules inserted. Base: 2787 rules (167 with conclusion selected). Queue: 1553 rules.
+6400 rules inserted. Base: 2808 rules (167 with conclusion selected). Queue: 1676 rules.
+6600 rules inserted. Base: 2907 rules (167 with conclusion selected). Queue: 1787 rules.
+6800 rules inserted. Base: 2913 rules (167 with conclusion selected). Queue: 1771 rules.
+7000 rules inserted. Base: 2947 rules (167 with conclusion selected). Queue: 2122 rules.
+7200 rules inserted. Base: 3030 rules (167 with conclusion selected). Queue: 2058 rules.
+7400 rules inserted. Base: 3049 rules (167 with conclusion selected). Queue: 2247 rules.
+7600 rules inserted. Base: 3130 rules (167 with conclusion selected). Queue: 2206 rules.
+7800 rules inserted. Base: 3156 rules (167 with conclusion selected). Queue: 2406 rules.
+8000 rules inserted. Base: 3232 rules (167 with conclusion selected). Queue: 2344 rules.
+8200 rules inserted. Base: 3296 rules (167 with conclusion selected). Queue: 2476 rules.
+8400 rules inserted. Base: 3455 rules (167 with conclusion selected). Queue: 2404 rules.
+8600 rules inserted. Base: 3630 rules (167 with conclusion selected). Queue: 2233 rules.
+8800 rules inserted. Base: 3656 rules (167 with conclusion selected). Queue: 2236 rules.
+9000 rules inserted. Base: 3656 rules (167 with conclusion selected). Queue: 2321 rules.
+9200 rules inserted. Base: 3751 rules (167 with conclusion selected). Queue: 2276 rules.
+9400 rules inserted. Base: 3896 rules (167 with conclusion selected). Queue: 2123 rules.
+9600 rules inserted. Base: 3896 rules (167 with conclusion selected). Queue: 2211 rules.
+9800 rules inserted. Base: 4051 rules (167 with conclusion selected). Queue: 2083 rules.
+10000 rules inserted. Base: 4129 rules (167 with conclusion selected). Queue: 2027 rules.
+10200 rules inserted. Base: 4165 rules (167 with conclusion selected). Queue: 2073 rules.
+10400 rules inserted. Base: 4304 rules (167 with conclusion selected). Queue: 1945 rules.
+10600 rules inserted. Base: 4306 rules (167 with conclusion selected). Queue: 2017 rules.
+10800 rules inserted. Base: 4361 rules (167 with conclusion selected). Queue: 2014 rules.
+11000 rules inserted. Base: 4433 rules (167 with conclusion selected). Queue: 1942 rules.
+11200 rules inserted. Base: 4453 rules (167 with conclusion selected). Queue: 1922 rules.
+11400 rules inserted. Base: 4479 rules (167 with conclusion selected). Queue: 1896 rules.
+11600 rules inserted. Base: 4564 rules (167 with conclusion selected). Queue: 1823 rules.
+11800 rules inserted. Base: 4582 rules (167 with conclusion selected). Queue: 1805 rules.
+12000 rules inserted. Base: 4662 rules (167 with conclusion selected). Queue: 1732 rules.
+12200 rules inserted. Base: 4680 rules (167 with conclusion selected). Queue: 1714 rules.
+12400 rules inserted. Base: 4734 rules (167 with conclusion selected). Queue: 1673 rules.
+12600 rules inserted. Base: 4793 rules (167 with conclusion selected). Queue: 1607 rules.
+12800 rules inserted. Base: 4864 rules (167 with conclusion selected). Queue: 1551 rules.
+13000 rules inserted. Base: 5064 rules (167 with conclusion selected). Queue: 1351 rules.
+13200 rules inserted. Base: 5264 rules (167 with conclusion selected). Queue: 1151 rules.
+13400 rules inserted. Base: 5436 rules (167 with conclusion selected). Queue: 997 rules.
+13600 rules inserted. Base: 5636 rules (167 with conclusion selected). Queue: 797 rules.
+13800 rules inserted. Base: 5822 rules (167 with conclusion selected). Queue: 620 rules.
+14000 rules inserted. Base: 6004 rules (167 with conclusion selected). Queue: 447 rules.
+14200 rules inserted. Base: 6100 rules (167 with conclusion selected). Queue: 330 rules.
+14400 rules inserted. Base: 6187 rules (167 with conclusion selected). Queue: 251 rules.
+14600 rules inserted. Base: 6363 rules (167 with conclusion selected). Queue: 77 rules.
+14800 rules inserted. Base: 6362 rules (167 with conclusion selected). Queue: 80 rules.
+15000 rules inserted. Base: 6246 rules (167 with conclusion selected). Queue: 84 rules.
+15200 rules inserted. Base: 6223 rules (167 with conclusion selected). Queue: 4 rules.
+Starting query event(ResponderDone(si_1,sr_1,ki,kr)) ==> event(InitiatorBegin(si_1,sr_1))
+goal reachable: b-event(InitiatorBegin(pk(siA[]),pk(srB[]))) && attacker(mac1_2) -> event(ResponderDone(pk(siA[]),pk(srB[]),kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),k2b(dh(pk(siA[]),srB[]))),g2b(pk(er_1))),k2b(dh(pk(ei_1),er_1))),k2b(dh(pk(siA[]),er_1))),k2b(psk[])),KEMPTY),kdf2b(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),k2b(dh(pk(siA[]),srB[]))),g2b(pk(er_1))),k2b(dh(pk(ei_1),er_1))),k2b(dh(pk(siA[]),er_1))),k2b(psk[])),KEMPTY)))
+Abbreviations:
+ei_1 = ei[!1 = @sid]
+tai64n_2 = tai64n[!1 = @sid]
+er_1 = er[mac1_1 = mac1_2,msgTs_1 = aead(kdf2b(kdf2a(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),k2b(dh(pk(siA[]),srB[]))),zero_nonce,tai64n_2,hT2(pk(srB[]),pk(ei_1),aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))))),msgStatic_1 = aead(kdf2b(kdf1(CK0,g2b(pk(ei_1))),k2b(dh(pk(ei_1),srB[]))),zero_nonce,g2b(pk(siA[])),hT1(pk(srB[]),pk(ei_1))),Ei_1 = pk(ei_1),!1 = @sid_1]
+RESULT event(ResponderDone(si_1,sr_1,ki,kr)) ==> event(InitiatorBegin(si_1,sr_1)) is true.
+
+--------------------------------------------------------------
+Verification summary:
+
+Query event(ResponderDone(si_1,sr_1,ki,kr)) ==> event(InitiatorBegin(si_1,sr_1)) is true.
+
+--------------------------------------------------------------
+

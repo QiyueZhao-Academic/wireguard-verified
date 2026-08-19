@@ -1,0 +1,50 @@
+(* ------------------------------------------------------------------------- *)
+(* kem.pvl                                                                   *)
+(*                                                                           *)
+(* Three symbolic KEMs differing only in their binding properties.  They are  *)
+(* used to answer the question posed in Section VI of the report: if the      *)
+(* WireGuard psk slot is filled with a KEM-derived secret -- the construction *)
+(* Rosenpass uses -- what must that KEM bind in order to preserve the         *)
+(* properties WireGuard has with a manually configured psk?                   *)
+(*                                                                           *)
+(* Naming follows the KEM binding literature (Cremers, Dax, Medinger,         *)
+(* USENIX Security 2024): a KEM is X-BIND-P-Q if property P of the            *)
+(* ciphertext/key pair determines Q.  The two cases separated here are:       *)
+(*                                                                           *)
+(*   MAL-BIND-K-PK  the shared secret determines the encapsulation key        *)
+(*   (absent)       the shared secret is independent of the encapsulation key *)
+(*                                                                           *)
+(* ML-KEM is known to satisfy the former; a KEM that hashes only the          *)
+(* randomness into the shared secret does not.                                *)
+(* ------------------------------------------------------------------------- *)
+
+type kemsk.   (* decapsulation key *)
+type kempk.   (* encapsulation key *)
+type kemct.   (* ciphertext        *)
+
+fun kempub(kemsk): kempk.
+
+(* --- Ideal KEM: the shared secret binds the encapsulation key --------------
+   ss = kemss(pk, r) mentions pk, so a ciphertext produced under one
+   encapsulation key can never yield the shared secret of another.            *)
+fun encap(kempk, bitstring): kemct.
+fun kemss(kempk, bitstring): key.
+reduc forall sk: kemsk, r: bitstring;
+  decap(sk, encap(kempub(sk), r)) = kemss(kempub(sk), r).
+
+(* --- Weak KEM: no binding between shared secret and encapsulation key ------
+   ss = kemssW(r) depends on the encapsulation randomness alone.  This is the
+   modelling counterpart of a KEM whose key-derivation hashes the message but
+   not the public key -- the exact omission that MAL-BIND-K-PK forbids.       *)
+fun encapW(kempk, bitstring): kemct.
+fun kemssW(bitstring): key.
+reduc forall sk: kemsk, r: bitstring;
+  decapW(sk, encapW(kempub(sk), r)) = kemssW(r).
+
+(* Re-encapsulation.  Given a ciphertext addressed to one encapsulation key,
+   anyone can produce a ciphertext addressed to another key carrying the same
+   shared secret.  This is the capability that an unbound KEM hands to the
+   attacker, stated explicitly so the attack it enables is visible in the
+   derivation rather than buried in the equational theory.                    *)
+reduc forall p1: kempk, p2: kempk, r: bitstring;
+  reencap(encapW(p1, r), p2) = encapW(p2, r).

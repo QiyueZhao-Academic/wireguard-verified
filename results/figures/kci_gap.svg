@@ -1,0 +1,18 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='700' height='260' viewBox='0 0 700 260'>
+<rect width='700' height='260' fill='white'/>
+<text x='30' y='28' font-family='Helvetica,Arial,sans-serif' font-size='13' fill='#1a1a1a' text-anchor='start' font-weight='bold'>Responder static key compromised: what the attacker can and cannot do</text>
+<rect x='40' y='60' width='280' height='130' fill='none' stroke='#a33a2a' stroke-width='1.6' rx='4'/>
+<text x='54' y='84' font-family='Helvetica,Arial,sans-serif' font-size='12' fill='#a33a2a' text-anchor='start' font-weight='bold'>Forge message 1</text>
+<text x='54' y='106' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#1a1a1a' text-anchor='start' font-weight='normal'>needs es = DH(e_i, S_r) and ss = DH(s_i, S_r)</text>
+<text x='54' y='124' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='start' font-weight='normal'>both computable from the leaked responder scalar</text>
+<line x1='54' y1='140' x2='306' y2='140' stroke='#d4d4d4'/>
+<text x='54' y='160' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#a33a2a' text-anchor='start' font-weight='bold'>S6a  falsified: responder commits key material</text>
+<rect x='380' y='60' width='280' height='130' fill='none' stroke='#2f6f4e' stroke-width='1.6' rx='4'/>
+<text x='394' y='84' font-family='Helvetica,Arial,sans-serif' font-size='12' fill='#2f6f4e' text-anchor='start' font-weight='bold'>Complete the session</text>
+<text x='394' y='106' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#1a1a1a' text-anchor='start' font-weight='normal'>needs se = DH(e_r, S_i)</text>
+<text x='394' y='124' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='start' font-weight='normal'>requires the initiator's scalar, which is not compromised</text>
+<line x1='394' y1='140' x2='646' y2='140' stroke='#d4d4d4'/>
+<text x='394' y='160' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#2f6f4e' text-anchor='start' font-weight='bold'>S6b  verified: no traffic is ever accepted</text>
+<polygon points='330,120 370,120 370,114 382,125 370,136 370,130 330,130' fill='#6b6b6b'/>
+<text x='30' y='226' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#6b6b6b' text-anchor='start' font-weight='normal'>ProVerif did not terminate on either level within the documented budget; Tamarin decided both in under 10 s.</text>
+</svg>

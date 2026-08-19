@@ -1,0 +1,212 @@
+# Expected outcome of every query in the suite.
+#
+# This file turns formal verification into a regression suite: `make verify`
+# compares each observed verdict against the expectation recorded here and
+# fails the build on any mismatch.  A query whose outcome is an attack is
+# just as much an expectation as one that is proved -- 23_pq_fs_nopsk is
+# supposed to fail, and a run in which it suddenly succeeded would mean the
+# model had drifted, not that the protocol had improved.
+#
+# Fields
+#   tool     proverif | tamarin
+#   model    path relative to models/
+#   query    the query or lemma identifier as the tool prints it
+#   expect   proved | attack_found | inconclusive | nonterminating
+#   tier     local (fits the documented memory budget) | ci
+#   budget   wall-clock seconds and address-space cap used for `expect`
+#   property the identifier used in the report's results table
+#   note     why this outcome is the expected one
+
+queries:
+  - tool: proverif
+    model: proverif/20_secrecy.pv
+    query: "not attacker(witnessI[])"
+    property: P1
+    expect: proved
+    tier: local
+    budget: {seconds: 300, mem: 2800M}
+    note: Baseline session-key secrecy, unbounded sessions, both parties honest.
+
+  - tool: proverif
+    model: proverif/21_forward_secrecy.pv
+    query: "not attacker_p1(witnessI[])"
+    property: P3
+    expect: proved
+    tier: local
+    budget: {seconds: 300, mem: 2800M}
+    note: Static scalars revealed in phase 1; the ee term carries the property.
+
+  - tool: proverif
+    model: proverif/22_pq_forward_secrecy.pv
+    query: "not attacker_p1(witnessI[])"
+    property: P4
+    expect: proved
+    tier: local
+    budget: {seconds: 300, mem: 2800M}
+    note: >
+      Phase-1 discrete-log oracle collapses every DH term. The psk is the only
+      remaining secret, and it suffices.
+
+  - tool: proverif
+    model: proverif/23_pq_fs_nopsk.pv
+    query: "not attacker_p1(witnessI[])"
+    property: P4c
+    expect: attack_found
+    tier: local
+    budget: {seconds: 300, mem: 2800M}
+    note: >
+      Control for P4. Identical except the psk is public. The attack is the
+      expected outcome; its absence would invalidate the P4 result.
+
+  - tool: proverif
+    model: proverif/24a_aliveness.pv
+    query: "event(InitiatorDone(...)) ==> event(ResponderBegin(...))"
+    property: P5a
+    expect: nonterminating
+    tier: local
+    budget: {seconds: 250, mem: 2800M}
+    note: >
+      Agreement in the responder-to-initiator direction. Saturation exhausts
+      the budget; three formulations were tried. See docs/model-notes.md.
+
+  - tool: proverif
+    model: proverif/24b_agreement.pv
+    query: "event(ResponderDone(...)) ==> event(InitiatorBegin(...))"
+    property: P5b
+    expect: proved
+    tier: local
+    budget: {seconds: 300, mem: 2800M}
+    note: Non-injective agreement, initiator authenticated to the responder.
+
+  - tool: proverif
+    model: proverif/24c_inj_agreement.pv
+    query: "inj-event(ResponderDone(...)) ==> inj-event(InitiatorBegin(...))"
+    property: P5c
+    expect: proved
+    tier: local
+    budget: {seconds: 300, mem: 2800M}
+    note: >
+      Injective agreement, and therefore replay resistance: a replayed
+      initiation would yield two completions against one initiator run.
+
+  - tool: proverif
+    model: proverif/25a_kci_commit.pv
+    query: "event(ResponderBegin(...)) ==> event(InitiatorBegin(...))"
+    property: P6a
+    expect: nonterminating
+    tier: local
+    budget: {seconds: 250, mem: 2800M}
+    note: >
+      Leaking the responder scalar unlocks every responder-side DH term for
+      the attacker and saturation diverges, even bounded to one initiator
+      session. Delegated to Tamarin in the tool-comparison discussion.
+
+  - tool: proverif
+    model: proverif/25b_kci_complete.pv
+    query: "event(ResponderDone(...)) ==> event(InitiatorBegin(...))"
+    property: P6b
+    expect: nonterminating
+    tier: local
+    budget: {seconds: 250, mem: 2800M}
+    note: Same cause as P6a.
+
+  - tool: proverif
+    model: proverif/pq/30_kem_psk_ideal.pv
+    query: "not attacker(pskWitness[])"
+    property: P12a
+    expect: proved
+    tier: local
+    budget: {seconds: 120, mem: 2000M}
+    note: KEM binding the shared secret to the encapsulation key.
+
+  - tool: proverif
+    model: proverif/pq/31_kem_psk_reencap.pv
+    query: "not attacker(pskWitness[])"
+    property: P12b
+    expect: attack_found
+    tier: local
+    budget: {seconds: 120, mem: 2000M}
+    note: >
+      Control for P12a. Without K-PK binding the attacker redirects the
+      ciphertext to a key it controls and recovers the psk outright.
+
+  - tool: tamarin
+    model: tamarin/40_wireguard_state.spthy
+    query: executable
+    property: S0
+    expect: proved
+    tier: local
+    budget: {seconds: 600, mem: 2800M}
+    note: >
+      Sanity: the model admits a complete honest run. Without it, a vacuous
+      proof is indistinguishable from a model in which no rule can fire.
+
+  - tool: proverif
+    model: proverif/pq/30_kem_psk_ideal.pv
+    query: "event(PskResponder(p,k)) ==> event(PskInitiator(p,k)) || attacker(k)"
+    property: P12c
+    expect: inconclusive
+    tier: local
+    budget: {seconds: 120, mem: 2000M}
+    note: >
+      Responder-view soundness. ProVerif's approximation is too coarse to
+      decide it. Recorded as inconclusive rather than reformulated until it
+      passed; an undecided query is a result, a restated one is not.
+
+  - tool: tamarin
+    model: tamarin/40_wireguard_state.spthy
+    query: session_key_secrecy
+    property: S1
+    expect: proved
+    tier: local
+    budget: {seconds: 600, mem: 2800M}
+    note: >
+      Tamarin's counterpart to P1. Both tools agree, which is the baseline
+      against which the disagreements below are read.
+
+  - tool: tamarin
+    model: tamarin/40_wireguard_state.spthy
+    query: forward_secrecy
+    property: S3
+    expect: proved
+    tier: local
+    budget: {seconds: 600, mem: 2800M}
+    note: Counterpart to P3; static keys revealed strictly after the session.
+
+  - tool: tamarin
+    model: tamarin/40_wireguard_state.spthy
+    query: agreement_responder
+    property: S5
+    expect: proved
+    tier: local
+    budget: {seconds: 600, mem: 2800M}
+    note: >
+      Agreement with no compromise. Distinct from P5a, which quantifies in the
+      opposite direction; the two are not the same property in different
+      notation.
+
+  - tool: tamarin
+    model: tamarin/40_wireguard_state.spthy
+    query: kci_responder_commit
+    property: S6a
+    expect: attack_found
+    tier: local
+    budget: {seconds: 600, mem: 2800M}
+    note: >
+      The headline KCI result, and the reason this entry exists: with the
+      responder's static key compromised the responder commits key material to
+      a session it attributes to an honest initiator. Expected to be falsified.
+      A run in which it were proved would mean the compromise rule had stopped
+      firing, not that WireGuard had gained a property.
+
+  - tool: tamarin
+    model: tamarin/40_wireguard_state.spthy
+    query: kci_responder_complete
+    property: S6b
+    expect: proved
+    tier: local
+    budget: {seconds: 600, mem: 2800M}
+    note: >
+      The other side of S6a: no transport traffic is ever accepted on that
+      session. S6a and S6b together locate the KCI gap between committing key
+      material and completing, which is the claim the report makes.

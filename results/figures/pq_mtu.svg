@@ -1,0 +1,40 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='700' height='380' viewBox='0 0 700 380'>
+<rect width='700' height='380' fill='white'/>
+<text x='110' y='28' font-family='Helvetica,Arial,sans-serif' font-size='13' fill='#1a1a1a' text-anchor='start' font-weight='bold'>Handshake initiation size against usable UDP payload</text>
+<text x='110' y='46' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='start' font-weight='normal'>bar = datagram size; vertical rules = largest payload each path carries</text>
+<line x1='465.9111111111111' y1='60' x2='465.9111111111111' y2='300' stroke='#a33a2a' stroke-width='1.6' stroke-dasharray='5,4'/>
+<text x='469.9111111111111' y='72' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#a33a2a' text-anchor='start' font-weight='bold'>IPv6 minimum MTU (1232 B)</text>
+<line x1='535.2444444444445' y1='60' x2='535.2444444444445' y2='300' stroke='#6b6b6b' stroke-width='1' stroke-dasharray='5,4'/>
+<text x='539.2444444444445' y='85' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='start' font-weight='normal'>Ethernet, IPv4 (1472 B)</text>
+<line x1='506.35555555555555' y1='60' x2='506.35555555555555' y2='300' stroke='#6b6b6b' stroke-width='1' stroke-dasharray='5,4'/>
+<text x='510.35555555555555' y='124' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='start' font-weight='normal'>Tunnel stacking, IPv4 (1372 B)</text>
+<rect x='110' y='130' width='42.75555555555556' height='34' fill='#2f6f4e' opacity='0.82'/>
+<text x='102' y='151.0' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#1a1a1a' text-anchor='end' font-weight='normal'>X25519</text>
+<text x='158.75555555555556' y='151.0' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#1a1a1a' text-anchor='start' font-weight='bold'>148 B</text>
+<rect x='110' y='182' width='264.6222222222222' height='34' fill='#2f6f4e' opacity='0.82'/>
+<text x='102' y='203.0' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#1a1a1a' text-anchor='end' font-weight='normal'>ML-KEM-512</text>
+<text x='380.6222222222222' y='203.0' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#1a1a1a' text-anchor='start' font-weight='bold'>916 B</text>
+<rect x='110' y='234' width='375.55555555555554' height='34' fill='#a33a2a' opacity='0.82'/>
+<text x='102' y='255.0' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#1a1a1a' text-anchor='end' font-weight='normal'>ML-KEM-768</text>
+<text x='491.55555555555554' y='255.0' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#1a1a1a' text-anchor='start' font-weight='bold'>1300 B</text>
+<rect x='110' y='286' width='486.4888888888888' height='34' fill='#a33a2a' opacity='0.82'/>
+<text x='102' y='307.0' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#1a1a1a' text-anchor='end' font-weight='normal'>ML-KEM-1024</text>
+<text x='602.4888888888888' y='307.0' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#1a1a1a' text-anchor='start' font-weight='bold'>1684 B</text>
+<line x1='110' y1='300' x2='630' y2='300' stroke='#1a1a1a' stroke-width='1'/>
+<line x1='110.0' y1='300' x2='110.0' y2='304' stroke='#1a1a1a'/>
+<text x='110.0' y='317' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>0</text>
+<line x1='196.66666666666666' y1='300' x2='196.66666666666666' y2='304' stroke='#1a1a1a'/>
+<text x='196.66666666666666' y='317' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>300</text>
+<line x1='283.3333333333333' y1='300' x2='283.3333333333333' y2='304' stroke='#1a1a1a'/>
+<text x='283.3333333333333' y='317' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>600</text>
+<line x1='370.0' y1='300' x2='370.0' y2='304' stroke='#1a1a1a'/>
+<text x='370.0' y='317' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>900</text>
+<line x1='456.66666666666663' y1='300' x2='456.66666666666663' y2='304' stroke='#1a1a1a'/>
+<text x='456.66666666666663' y='317' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>1200</text>
+<line x1='543.3333333333334' y1='300' x2='543.3333333333334' y2='304' stroke='#1a1a1a'/>
+<text x='543.3333333333334' y='317' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>1500</text>
+<line x1='630.0' y1='300' x2='630.0' y2='304' stroke='#1a1a1a'/>
+<text x='630.0' y='317' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>1800</text>
+<text x='370.0' y='336' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#6b6b6b' text-anchor='middle' font-weight='normal'>bytes</text>
+<text x='110' y='360' font-family='Helvetica,Arial,sans-serif' font-size='10' fill='#a33a2a' text-anchor='start' font-weight='bold'>ML-KEM-768 exceeds the IPv6 minimum-MTU payload by 68 B: an in-band handshake has no guaranteed path.</text>
+</svg>

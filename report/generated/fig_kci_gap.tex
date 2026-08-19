@@ -1,0 +1,21 @@
+\begin{tikzpicture}[x=1cm,y=1cm,font=\footnotesize]
+  \node[draw=badred,thick,rounded corners,align=left,inner sep=6pt,
+        text width=7.0cm] (a) at (0,0)
+    {\textbf{\color{badred}1. Forge message 1}\\[2pt]
+     needs $es=\mathrm{DH}(e_i,S_r)$ and $ss=\mathrm{DH}(s_i,S_r)$\\[1pt]
+     {\color{black!55}both computable from the leaked responder scalar}\\[3pt]
+     \hrule\vspace{3pt}
+     {\color{badred}\textbf{S6a falsified}} --- the responder commits key
+     material to a session it attributes to an honest initiator};
+  \node[draw=okgreen,thick,rounded corners,align=left,inner sep=6pt,
+        text width=7.0cm] (b) at (0,-3.15)
+    {\textbf{\color{okgreen}2. Complete the session}\\[2pt]
+     additionally needs $se=\mathrm{DH}(e_r,S_i)$\\[1pt]
+     {\color{black!55}requires the initiator's static scalar, which is not
+      compromised}\\[3pt]
+     \hrule\vspace{3pt}
+     {\color{okgreen}\textbf{S6b verified}} --- no transport record is ever
+     accepted on that session};
+  \draw[->,very thick,black!45] (a.south) -- node[right,black!55,align=left]
+    {\scriptsize the gap $se$ holds open} (b.north);
+\end{tikzpicture}

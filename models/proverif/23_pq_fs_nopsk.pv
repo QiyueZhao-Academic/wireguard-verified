@@ -1,0 +1,25 @@
+(* P4' -- post-quantum forward secrecy WITHOUT an effective psk.
+   Identical to 22 except that the pre-shared key is published, modelling the
+   all-zero default that WireGuard uses when no psk is configured.
+
+   The expected outcome is an attack: with every DH term recoverable and no
+   independent secret in the chain, a phase-1 attacker reconstructs the
+   transport keys.  This is the control experiment that makes the result of
+   22 meaningful -- without it, 22 would only show that some property holds,
+   not that the psk is what makes it hold. *)
+
+reduc forall x: exponent; dlog(pk(x)) = x [private].
+
+query attacker(witnessI);
+      attacker(witnessR).
+
+process
+  new siA: exponent; let SA = pk(siA) in
+  new srB: exponent; let SB = pk(srB) in
+  new psk: key;
+  (* The psk is public: this is the no-psk configuration. *)
+  out(net, (SA, SB, psk));
+  ( (!Initiator(siA, SA, SB, psk))
+  | (!Responder(srB, SB, psk))
+  | (phase 1; !(in(net, (X: G)); out(net, dlog(X))))
+  )

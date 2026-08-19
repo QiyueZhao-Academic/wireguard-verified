@@ -1,0 +1,28 @@
+\begin{tikzpicture}[x=1cm,y=1cm,font=\footnotesize]
+  \fill[okgreen!12] (0,0) rectangle (4.2,0.72);
+  \fill[badred!12]  (4.2,0) rectangle (8.4,0.72);
+  \node at (2.1,0.36) {\bfseries phase 0 --- sessions run};
+  \node at (6.3,0.36) {\bfseries phase 1 --- after the fact};
+  \draw[badred,dashed,thick] (4.2,-1.42) -- (4.2,0.95);
+
+  \node[anchor=north west,text width=3.9cm,black!60,inner sep=2pt,
+        font=\scriptsize] at (0.05,-0.06)
+    {Dolev--Yao network control. Every ephemeral public value travels in
+     clear, so all of it can be recorded.};
+  \node[anchor=north west,text width=3.9cm,badred,inner sep=2pt,
+        font=\scriptsize] at (4.3,-0.06)
+    {Static scalars released and a discrete-logarithm oracle exposed: every
+     recorded public value inverts.};
+
+  \draw[black!25] (0,-1.6) -- (8.4,-1.6);
+  \node[anchor=west,black!55,font=\scriptsize\itshape] at (0,-1.82)
+    {which properties depend on this staging};
+  \node[anchor=west] at (0,-2.20) {P3\quad forward secrecy, statics released};
+  \node[anchor=east,okgreen] at (8.4,-2.20) {\bfseries proved};
+  \node[anchor=west] at (0,-2.52) {P4\quad post-quantum FS, psk secret};
+  \node[anchor=east,okgreen] at (8.4,-2.52) {\bfseries proved};
+  \node[anchor=west] at (0,-2.84) {P4c\ \ the same model, psk published};
+  \node[anchor=east,badred] at (8.4,-2.84) {\bfseries attack found};
+  \node[anchor=west] at (0,-3.16) {S6a/S6b\ \ KCI, responder static leaked};
+  \node[anchor=east,black!55] at (8.4,-3.16) {\bfseries the gap};
+\end{tikzpicture}

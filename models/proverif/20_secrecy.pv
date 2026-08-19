@@ -1,0 +1,17 @@
+(* P1 -- session-key secrecy.
+   Baseline reachability property: with both parties honest and an unbounded
+   number of concurrent sessions, the attacker never derives either transport
+   key.  Both witnesses are private names sent under the respective transport
+   key, so attacker(witness) is exactly key recovery. *)
+
+query attacker(witnessI);
+      attacker(witnessR).
+
+process
+  new siA: exponent; let SA = pk(siA) in
+  new srB: exponent; let SB = pk(srB) in
+  new psk: key;
+  (* Static public values are published: in WireGuard they are configured on
+     the peer and must be assumed known to a network observer. *)
+  out(net, (SA, SB));
+  ( (!Initiator(siA, SA, SB, psk)) | (!Responder(srB, SB, psk)) )

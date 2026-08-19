@@ -1,0 +1,1111 @@
+maude tool: 'maude'
+ checking version: WARNING:
+
+ 'maude --version' returned unsupported version '3.2'
+ Please install one of the following versions of Maude: 2.7.1, 3.0, 3.1, 3.2.1, 3.2.2, 3.3, 3.3.1, 3.4, 3.5, 3.5.1
+
+Detailed results from testing 'maude'
+ command: maude --version
+ stdin:   
+ stdout:  3.2
+
+ stderr:  
+ checking installation: OK.
+[Theory WireGuard_IKpsk2] Theory loaded
+[Theory WireGuard_IKpsk2] Theory translated
+[Theory WireGuard_IKpsk2] Theory closed
+[Saturating Sources] Step 1 (Max 5)
+[Saturating Sources] Done
+theory WireGuard_IKpsk2
+
+begin
+
+// Function signature and definition of the equational theory E
+
+builtins: diffie-hellman
+functions: aead/3, fst/1, hT1/2, hT2/3, hT3/4, hT4/5, hT5/6, kdf1/2,
+           kdf2a/2, kdf2b/2, kdf3a/2, kdf3b/2, kdf3c/2, mac/2, pair/2, snd/1
+equations: fst(<x.1, x.2>) = x.1, snd(<x.1, x.2>) = x.2
+
+rule (modulo E) Register_Static:
+   [ Fr( ~s ) ]
+  --[ RegisterStatic( $A ) ]->
+   [ !Ltk( $A, ~s ), !Pk( $A, 'g'^~s ), Out( 'g'^~s ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Register_Psk:
+   [ Fr( ~psk ) ] --[ RegisterPsk( $A, $B ) ]-> [ !Psk( $A, $B, ~psk ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Reveal_Ltk:
+   [ !Ltk( A, s ) ] --[ RevealLtk( A ) ]-> [ Out( s ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Reveal_Psk:
+   [ !Psk( A, B, psk ) ] --[ RevealPsk( A, B ) ]-> [ Out( psk ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) I_1:
+   [ Fr( ~ei ), Fr( ~ts ), !Ltk( $I, ~si ), !Pk( $R, pkR ) ]
+  --[ I_Begin( $I, $R, 'g'^~si, pkR ) ]->
+   [
+   Out( <'g'^~ei, 
+         aead(kdf2b(kdf1('ck0', 'g'^~ei), pkR^~ei), 'g'^~si, hT1(pkR, 'g'^~ei)), 
+         aead(kdf2b(kdf2a(kdf1('ck0', 'g'^~ei), pkR^~ei), pkR^~si), ~ts,
+              hT2(pkR, 'g'^~ei,
+                  aead(kdf2b(kdf1('ck0', 'g'^~ei), pkR^~ei), 'g'^~si,
+                       hT1(pkR, 'g'^~ei)))), 
+         mac(hT1('mac1', pkR),
+             <'g'^~ei, 
+              aead(kdf2b(kdf1('ck0', 'g'^~ei), pkR^~ei), 'g'^~si, hT1(pkR, 'g'^~ei)), 
+              aead(kdf2b(kdf2a(kdf1('ck0', 'g'^~ei), pkR^~ei), pkR^~si), ~ts,
+                   hT2(pkR, 'g'^~ei,
+                       aead(kdf2b(kdf1('ck0', 'g'^~ei), pkR^~ei), 'g'^~si, hT1(pkR, 'g'^~ei))))
+             >)
+        >
+   ),
+   St_I_1( $I, $R, ~si, pkR, ~ei,
+           kdf2a(kdf2a(kdf1('ck0', 'g'^~ei), pkR^~ei), pkR^~si),
+           hT3(pkR, 'g'^~ei,
+               aead(kdf2b(kdf1('ck0', 'g'^~ei), pkR^~ei), 'g'^~si, hT1(pkR, 'g'^~ei)),
+               aead(kdf2b(kdf2a(kdf1('ck0', 'g'^~ei), pkR^~ei), pkR^~si), ~ts,
+                    hT2(pkR, 'g'^~ei,
+                        aead(kdf2b(kdf1('ck0', 'g'^~ei), pkR^~ei), 'g'^~si, hT1(pkR, 'g'^~ei)))))
+   )
+   ]
+
+  /*
+  rule (modulo AC) I_1:
+     [ Fr( ~ei ), Fr( ~ts ), !Ltk( $I, ~si ), !Pk( $R, pkR ) ]
+    --[ I_Begin( $I, $R, 'g'^~si, pkR ) ]->
+     [
+     Out( <'g'^~ei, 
+           aead(kdf2b(kdf1('ck0', 'g'^~ei), z), 'g'^~si, hT1(pkR, 'g'^~ei)), 
+           aead(kdf2b(kdf2a(kdf1('ck0', 'g'^~ei), z), z.1), ~ts,
+                hT2(pkR, 'g'^~ei,
+                    aead(kdf2b(kdf1('ck0', 'g'^~ei), z), 'g'^~si, hT1(pkR, 'g'^~ei)))), 
+           mac(hT1('mac1', pkR),
+               <'g'^~ei, 
+                aead(kdf2b(kdf1('ck0', 'g'^~ei), z), 'g'^~si, hT1(pkR, 'g'^~ei)), 
+                aead(kdf2b(kdf2a(kdf1('ck0', 'g'^~ei), z), z.1), ~ts,
+                     hT2(pkR, 'g'^~ei,
+                         aead(kdf2b(kdf1('ck0', 'g'^~ei), z), 'g'^~si, hT1(pkR, 'g'^~ei))))
+               >)
+          >
+     ),
+     St_I_1( $I, $R, ~si, pkR, ~ei,
+             kdf2a(kdf2a(kdf1('ck0', 'g'^~ei), z), z.1),
+             hT3(pkR, 'g'^~ei,
+                 aead(kdf2b(kdf1('ck0', 'g'^~ei), z), 'g'^~si, hT1(pkR, 'g'^~ei)),
+                 aead(kdf2b(kdf2a(kdf1('ck0', 'g'^~ei), z), z.1), ~ts,
+                      hT2(pkR, 'g'^~ei,
+                          aead(kdf2b(kdf1('ck0', 'g'^~ei), z), 'g'^~si, hT1(pkR, 'g'^~ei)))))
+     )
+     ]
+    variants (modulo AC)
+    1. ~ei   = ~ei.16
+       ~si   = ~si.17
+       pkR   = pkR.19
+       z     = pkR.19^~ei.16
+       z.1   = pkR.19^~si.17
+    
+    2. ~ei   = ~ei.21
+       ~si   = ~si.22
+       pkR   = z.29^inv(~si.22)
+       z     = z.29^(~ei.21*inv(~si.22))
+       z.1   = z.29
+    
+    3. ~ei   = ~ei.140
+       ~si   = ~si.141
+       pkR   = x.275^x.276
+       z     = x.275^(~ei.140*x.276)
+       z.1   = x.275^(~si.141*x.276)
+    
+    4. ~ei   = ~ei.142
+       ~si   = ~si.143
+       pkR   = x.279^inv((~si.143*x.280))
+       z     = x.279^(~ei.142*inv((~si.143*x.280)))
+       z.1   = x.279^inv(x.280)
+    
+    5. ~ei   = ~ei.142
+       ~si   = ~si.143
+       pkR   = x.279^(x.280*inv(~si.143))
+       z     = x.279^(~ei.142*x.280*inv(~si.143))
+       z.1   = x.279^x.280
+    
+    6. ~ei   = ~ei.143
+       ~si   = ~si.144
+       pkR   = x.280^(x.281*inv((~si.144*x.282)))
+       z     = x.280^(~ei.143*x.281*inv((~si.144*x.282)))
+       z.1   = x.280^(x.281*inv(x.282))
+    
+    7. pkR   = DH_neutral
+       z     = DH_neutral
+       z.1   = DH_neutral
+  */
+
+rule (modulo E) R_1:
+   [
+   Fr( ~er ), !Ltk( $R, ~sr ), !Pk( $I, pkI ), !Psk( $I, $R, psk ),
+   In( <Ei, aead(kdf2b(kdf1('ck0', Ei), Ei^~sr), pkI, hT1('g'^~sr, Ei)), 
+        aead(kdf2b(kdf2a(kdf1('ck0', Ei), Ei^~sr), pkI^~sr), ts,
+             hT2('g'^~sr, Ei,
+                 aead(kdf2b(kdf1('ck0', Ei), Ei^~sr), pkI, hT1('g'^~sr, Ei)))), 
+        m1>
+   )
+   ]
+  --[
+  R_Done( $I, $R, pkI, 'g'^~sr,
+          kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), Ei^~sr),
+                                           pkI^~sr),
+                                     'g'^~er),
+                                Ei^~er),
+                           pkI^~er),
+                      psk),
+                'kempty'),
+          kdf2b(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), Ei^~sr),
+                                           pkI^~sr),
+                                     'g'^~er),
+                                Ei^~er),
+                           pkI^~er),
+                      psk),
+                'kempty')
+  ),
+  SessionKey( $R,
+              kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), Ei^~sr),
+                                               pkI^~sr),
+                                         'g'^~er),
+                                    Ei^~er),
+                               pkI^~er),
+                          psk),
+                    'kempty')
+  ),
+  SessionKey( $R,
+              kdf2b(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), Ei^~sr),
+                                               pkI^~sr),
+                                         'g'^~er),
+                                    Ei^~er),
+                               pkI^~er),
+                          psk),
+                    'kempty')
+  ),
+  UsesPsk( $I, $R )
+  ]->
+   [
+   Out( <'g'^~er, 
+         aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), Ei^~sr), pkI^~sr),
+                                   'g'^~er),
+                              Ei^~er),
+                         pkI^~er),
+                    psk),
+              'empty',
+              hT5('g'^~sr, Ei,
+                  aead(kdf2b(kdf1('ck0', Ei), Ei^~sr), pkI, hT1('g'^~sr, Ei)),
+                  aead(kdf2b(kdf2a(kdf1('ck0', Ei), Ei^~sr), pkI^~sr), ts,
+                       hT2('g'^~sr, Ei,
+                           aead(kdf2b(kdf1('ck0', Ei), Ei^~sr), pkI, hT1('g'^~sr, Ei)))),
+                  'g'^~er,
+                  kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), Ei^~sr), pkI^~sr),
+                                       'g'^~er),
+                                  Ei^~er),
+                             pkI^~er),
+                        psk)))
+        >
+   ),
+   !Session_R( $I, $R,
+               kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), Ei^~sr),
+                                                pkI^~sr),
+                                          'g'^~er),
+                                     Ei^~er),
+                                pkI^~er),
+                           psk),
+                     'kempty'),
+               kdf2b(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), Ei^~sr),
+                                                pkI^~sr),
+                                          'g'^~er),
+                                     Ei^~er),
+                                pkI^~er),
+                           psk),
+                     'kempty')
+   )
+   ]
+
+  /*
+  rule (modulo AC) R_1:
+     [
+     Fr( ~er ), !Ltk( $R, ~sr ), !Pk( $I, pkI ), !Psk( $I, $R, psk ),
+     In( <Ei, aead(kdf2b(kdf1('ck0', Ei), z), pkI, hT1('g'^~sr, Ei)), 
+          aead(kdf2b(kdf2a(kdf1('ck0', Ei), z), z.1), ts,
+               hT2('g'^~sr, Ei,
+                   aead(kdf2b(kdf1('ck0', Ei), z), pkI, hT1('g'^~sr, Ei)))), 
+          m1>
+     )
+     ]
+    --[
+    R_Done( $I, $R, pkI, 'g'^~sr,
+            kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), z), z.1),
+                                       'g'^~er),
+                                  z.2),
+                             z.3),
+                        psk),
+                  'kempty'),
+            kdf2b(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), z), z.1),
+                                       'g'^~er),
+                                  z.2),
+                             z.3),
+                        psk),
+                  'kempty')
+    ),
+    SessionKey( $R,
+                kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), z), z.1),
+                                           'g'^~er),
+                                      z.2),
+                                 z.3),
+                            psk),
+                      'kempty')
+    ),
+    SessionKey( $R,
+                kdf2b(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), z), z.1),
+                                           'g'^~er),
+                                      z.2),
+                                 z.3),
+                            psk),
+                      'kempty')
+    ),
+    UsesPsk( $I, $R )
+    ]->
+     [
+     Out( <'g'^~er, 
+           aead(kdf3c(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), z), z.1),
+                                     'g'^~er),
+                                z.2),
+                           z.3),
+                      psk),
+                'empty',
+                hT5('g'^~sr, Ei, aead(kdf2b(kdf1('ck0', Ei), z), pkI, hT1('g'^~sr, Ei)),
+                    aead(kdf2b(kdf2a(kdf1('ck0', Ei), z), z.1), ts,
+                         hT2('g'^~sr, Ei,
+                             aead(kdf2b(kdf1('ck0', Ei), z), pkI, hT1('g'^~sr, Ei)))),
+                    'g'^~er,
+                    kdf3b(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), z), z.1), 'g'^~er),
+                                    z.2),
+                               z.3),
+                          psk)))
+          >
+     ),
+     !Session_R( $I, $R,
+                 kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), z), z.1),
+                                            'g'^~er),
+                                       z.2),
+                                  z.3),
+                             psk),
+                       'kempty'),
+                 kdf2b(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', Ei), z), z.1),
+                                            'g'^~er),
+                                       z.2),
+                                  z.3),
+                             psk),
+                       'kempty')
+     )
+     ]
+    variants (modulo AC)
+     1. ~er   = ~er.20
+        ~sr   = ~sr.21
+        Ei    = Ei.22
+        pkI   = DH_neutral
+        z     = Ei.22^~sr.21
+        z.1   = DH_neutral
+        z.2   = Ei.22^~er.20
+        z.3   = DH_neutral
+    
+     2. ~er   = ~er.22
+        ~sr   = ~sr.23
+        Ei    = Ei.24
+        pkI   = pkI.26
+        z     = Ei.24^~sr.23
+        z.1   = pkI.26^~sr.23
+        z.2   = Ei.24^~er.22
+        z.3   = pkI.26^~er.22
+    
+     3. ~er   = ~er.22
+        ~sr   = ~sr.23
+        Ei    = DH_neutral
+        pkI   = pkI.26
+        z     = DH_neutral
+        z.1   = pkI.26^~sr.23
+        z.2   = DH_neutral
+        z.3   = pkI.26^~er.22
+    
+     4. ~er   = ~er.26
+        ~sr   = ~sr.27
+        Ei    = z.34^inv(~sr.27)
+        pkI   = pkI.30
+        z     = z.34
+        z.1   = pkI.30^~sr.27
+        z.2   = z.34^(~er.26*inv(~sr.27))
+        z.3   = pkI.30^~er.26
+    
+     5. ~er   = ~er.26
+        ~sr   = ~sr.27
+        Ei    = z.34^inv(~sr.27)
+        pkI   = DH_neutral
+        z     = z.34
+        z.1   = DH_neutral
+        z.2   = z.34^(~er.26*inv(~sr.27))
+        z.3   = DH_neutral
+    
+     6. ~er   = ~er.28
+        ~sr   = ~sr.29
+        Ei    = Ei.30
+        pkI   = z.38^inv(~sr.29)
+        z     = Ei.30^~sr.29
+        z.1   = z.38
+        z.2   = Ei.30^~er.28
+        z.3   = z.38^(~er.28*inv(~sr.29))
+    
+     7. ~er   = ~er.28
+        ~sr   = ~sr.29
+        Ei    = DH_neutral
+        pkI   = z.38^inv(~sr.29)
+        z     = DH_neutral
+        z.1   = z.38
+        z.2   = DH_neutral
+        z.3   = z.38^(~er.28*inv(~sr.29))
+    
+     8. ~er   = ~er.28
+        ~sr   = ~sr.29
+        Ei    = z.36^inv(~sr.29)
+        pkI   = z.38^inv(~sr.29)
+        z     = z.36
+        z.1   = z.38
+        z.2   = z.36^(~er.28*inv(~sr.29))
+        z.3   = z.38^(~er.28*inv(~sr.29))
+    
+     9. ~er   = ~er.219
+        ~sr   = ~sr.220
+        Ei    = Ei.221
+        pkI   = x.433^x.434
+        z     = Ei.221^~sr.220
+        z.1   = x.433^(~sr.220*x.434)
+        z.2   = Ei.221^~er.219
+        z.3   = x.433^(~er.219*x.434)
+    
+    10. ~er   = ~er.219
+        ~sr   = ~sr.220
+        Ei    = DH_neutral
+        pkI   = x.433^x.434
+        z     = DH_neutral
+        z.1   = x.433^(~sr.220*x.434)
+        z.2   = DH_neutral
+        z.3   = x.433^(~er.219*x.434)
+    
+    11. ~er   = ~er.219
+        ~sr   = ~sr.220
+        Ei    = x.433^x.434
+        pkI   = pkI.223
+        z     = x.433^(~sr.220*x.434)
+        z.1   = pkI.223^~sr.220
+        z.2   = x.433^(~er.219*x.434)
+        z.3   = pkI.223^~er.219
+    
+    12. ~er   = ~er.219
+        ~sr   = ~sr.220
+        Ei    = x.433^x.434
+        pkI   = DH_neutral
+        z     = x.433^(~sr.220*x.434)
+        z.1   = DH_neutral
+        z.2   = x.433^(~er.219*x.434)
+        z.3   = DH_neutral
+    
+    13. ~er   = ~er.220
+        ~sr   = ~sr.221
+        Ei    = x.435^x.436
+        pkI   = z.230^inv(~sr.221)
+        z     = x.435^(~sr.221*x.436)
+        z.1   = z.230
+        z.2   = x.435^(~er.220*x.436)
+        z.3   = z.230^(~er.220*inv(~sr.221))
+    
+    14. ~er   = ~er.220
+        ~sr   = ~sr.221
+        Ei    = x.435^inv((~sr.221*x.436))
+        pkI   = pkI.224
+        z     = x.435^inv(x.436)
+        z.1   = pkI.224^~sr.221
+        z.2   = x.435^(~er.220*inv((~sr.221*x.436)))
+        z.3   = pkI.224^~er.220
+    
+    15. ~er   = ~er.220
+        ~sr   = ~sr.221
+        Ei    = x.435^inv((~sr.221*x.436))
+        pkI   = DH_neutral
+        z     = x.435^inv(x.436)
+        z.1   = DH_neutral
+        z.2   = x.435^(~er.220*inv((~sr.221*x.436)))
+        z.3   = DH_neutral
+    
+    16. ~er   = ~er.220
+        ~sr   = ~sr.221
+        Ei    = x.435^inv((~sr.221*x.436))
+        pkI   = z.230^inv(~sr.221)
+        z     = x.435^inv(x.436)
+        z.1   = z.230
+        z.2   = x.435^(~er.220*inv((~sr.221*x.436)))
+        z.3   = z.230^(~er.220*inv(~sr.221))
+    
+    17. ~er   = ~er.220
+        ~sr   = ~sr.221
+        Ei    = x.435^(x.436*inv(~sr.221))
+        pkI   = pkI.224
+        z     = x.435^x.436
+        z.1   = pkI.224^~sr.221
+        z.2   = x.435^(~er.220*x.436*inv(~sr.221))
+        z.3   = pkI.224^~er.220
+    
+    18. ~er   = ~er.220
+        ~sr   = ~sr.221
+        Ei    = x.435^(x.436*inv(~sr.221))
+        pkI   = DH_neutral
+        z     = x.435^x.436
+        z.1   = DH_neutral
+        z.2   = x.435^(~er.220*x.436*inv(~sr.221))
+        z.3   = DH_neutral
+    
+    19. ~er   = ~er.220
+        ~sr   = ~sr.221
+        Ei    = x.435^(x.436*inv(~sr.221))
+        pkI   = z.230^inv(~sr.221)
+        z     = x.435^x.436
+        z.1   = z.230
+        z.2   = x.435^(~er.220*x.436*inv(~sr.221))
+        z.3   = z.230^(~er.220*inv(~sr.221))
+    
+    20. ~er   = ~er.221
+        ~sr   = ~sr.222
+        Ei    = DH_neutral
+        pkI   = x.437^inv((~sr.222*x.438))
+        z     = DH_neutral
+        z.1   = x.437^inv(x.438)
+        z.2   = DH_neutral
+        z.3   = x.437^(~er.221*inv((~sr.222*x.438)))
+    
+    21. ~er   = ~er.221
+        ~sr   = ~sr.222
+        Ei    = DH_neutral
+        pkI   = x.437^(x.438*inv(~sr.222))
+        z     = DH_neutral
+        z.1   = x.437^x.438
+        z.2   = DH_neutral
+        z.3   = x.437^(~er.221*x.438*inv(~sr.222))
+    
+    22. ~er   = ~er.221
+        ~sr   = ~sr.222
+        Ei    = x.436^(x.437*inv((~sr.222*x.438)))
+        pkI   = pkI.225
+        z     = x.436^(x.437*inv(x.438))
+        z.1   = pkI.225^~sr.222
+        z.2   = x.436^(~er.221*x.437*inv((~sr.222*x.438)))
+        z.3   = pkI.225^~er.221
+    
+    23. ~er   = ~er.221
+        ~sr   = ~sr.222
+        Ei    = x.436^(x.437*inv((~sr.222*x.438)))
+        pkI   = DH_neutral
+        z     = x.436^(x.437*inv(x.438))
+        z.1   = DH_neutral
+        z.2   = x.436^(~er.221*x.437*inv((~sr.222*x.438)))
+        z.3   = DH_neutral
+    
+    24. ~er   = ~er.221
+        ~sr   = ~sr.222
+        Ei    = x.436^(x.437*inv((~sr.222*x.438)))
+        pkI   = z.231^inv(~sr.222)
+        z     = x.436^(x.437*inv(x.438))
+        z.1   = z.231
+        z.2   = x.436^(~er.221*x.437*inv((~sr.222*x.438)))
+        z.3   = z.231^(~er.221*inv(~sr.222))
+    
+    25. ~er   = ~er.222
+        ~sr   = ~sr.223
+        Ei    = Ei.224
+        pkI   = x.439^inv((~sr.223*x.440))
+        z     = Ei.224^~sr.223
+        z.1   = x.439^inv(x.440)
+        z.2   = Ei.224^~er.222
+        z.3   = x.439^(~er.222*inv((~sr.223*x.440)))
+    
+    26. ~er   = ~er.222
+        ~sr   = ~sr.223
+        Ei    = Ei.224
+        pkI   = x.439^(x.440*inv(~sr.223))
+        z     = Ei.224^~sr.223
+        z.1   = x.439^x.440
+        z.2   = Ei.224^~er.222
+        z.3   = x.439^(~er.222*x.440*inv(~sr.223))
+    
+    27. ~er   = ~er.222
+        ~sr   = ~sr.223
+        Ei    = DH_neutral
+        pkI   = x.438^(x.439*inv((~sr.223*x.440)))
+        z     = DH_neutral
+        z.1   = x.438^(x.439*inv(x.440))
+        z.2   = DH_neutral
+        z.3   = x.438^(~er.222*x.439*inv((~sr.223*x.440)))
+    
+    28. ~er   = ~er.222
+        ~sr   = ~sr.223
+        Ei    = z.230^inv(~sr.223)
+        pkI   = x.439^x.440
+        z     = z.230
+        z.1   = x.439^(~sr.223*x.440)
+        z.2   = z.230^(~er.222*inv(~sr.223))
+        z.3   = x.439^(~er.222*x.440)
+    
+    29. ~er   = ~er.222
+        ~sr   = ~sr.223
+        Ei    = z.230^inv(~sr.223)
+        pkI   = x.439^inv((~sr.223*x.440))
+        z     = z.230
+        z.1   = x.439^inv(x.440)
+        z.2   = z.230^(~er.222*inv(~sr.223))
+        z.3   = x.439^(~er.222*inv((~sr.223*x.440)))
+    
+    30. ~er   = ~er.222
+        ~sr   = ~sr.223
+        Ei    = z.230^inv(~sr.223)
+        pkI   = x.439^(x.440*inv(~sr.223))
+        z     = z.230
+        z.1   = x.439^x.440
+        z.2   = z.230^(~er.222*inv(~sr.223))
+        z.3   = x.439^(~er.222*x.440*inv(~sr.223))
+    
+    31. ~er   = ~er.222
+        ~sr   = ~sr.223
+        Ei    = x.436^x.437
+        pkI   = x.439^x.440
+        z     = x.436^(~sr.223*x.437)
+        z.1   = x.439^(~sr.223*x.440)
+        z.2   = x.436^(~er.222*x.437)
+        z.3   = x.439^(~er.222*x.440)
+    
+    32. ~er   = ~er.223
+        ~sr   = ~sr.224
+        Ei    = Ei.225
+        pkI   = x.440^(x.441*inv((~sr.224*x.442)))
+        z     = Ei.225^~sr.224
+        z.1   = x.440^(x.441*inv(x.442))
+        z.2   = Ei.225^~er.223
+        z.3   = x.440^(~er.223*x.441*inv((~sr.224*x.442)))
+    
+    33. ~er   = ~er.223
+        ~sr   = ~sr.224
+        Ei    = z.231^inv(~sr.224)
+        pkI   = x.440^(x.441*inv((~sr.224*x.442)))
+        z     = z.231
+        z.1   = x.440^(x.441*inv(x.442))
+        z.2   = z.231^(~er.223*inv(~sr.224))
+        z.3   = x.440^(~er.223*x.441*inv((~sr.224*x.442)))
+    
+    34. ~er   = ~er.223
+        ~sr   = ~sr.224
+        Ei    = x.438^x.439
+        pkI   = x.441^inv((~sr.224*x.442))
+        z     = x.438^(~sr.224*x.439)
+        z.1   = x.441^inv(x.442)
+        z.2   = x.438^(~er.223*x.439)
+        z.3   = x.441^(~er.223*inv((~sr.224*x.442)))
+    
+    35. ~er   = ~er.223
+        ~sr   = ~sr.224
+        Ei    = x.438^x.439
+        pkI   = x.441^(x.442*inv(~sr.224))
+        z     = x.438^(~sr.224*x.439)
+        z.1   = x.441^x.442
+        z.2   = x.438^(~er.223*x.439)
+        z.3   = x.441^(~er.223*x.442*inv(~sr.224))
+    
+    36. ~er   = ~er.223
+        ~sr   = ~sr.224
+        Ei    = x.438^inv((~sr.224*x.439))
+        pkI   = x.441^x.442
+        z     = x.438^inv(x.439)
+        z.1   = x.441^(~sr.224*x.442)
+        z.2   = x.438^(~er.223*inv((~sr.224*x.439)))
+        z.3   = x.441^(~er.223*x.442)
+    
+    37. ~er   = ~er.223
+        ~sr   = ~sr.224
+        Ei    = x.438^inv((~sr.224*x.439))
+        pkI   = x.441^inv((~sr.224*x.442))
+        z     = x.438^inv(x.439)
+        z.1   = x.441^inv(x.442)
+        z.2   = x.438^(~er.223*inv((~sr.224*x.439)))
+        z.3   = x.441^(~er.223*inv((~sr.224*x.442)))
+    
+    38. ~er   = ~er.223
+        ~sr   = ~sr.224
+        Ei    = x.438^inv((~sr.224*x.439))
+        pkI   = x.441^(x.442*inv(~sr.224))
+        z     = x.438^inv(x.439)
+        z.1   = x.441^x.442
+        z.2   = x.438^(~er.223*inv((~sr.224*x.439)))
+        z.3   = x.441^(~er.223*x.442*inv(~sr.224))
+    
+    39. ~er   = ~er.223
+        ~sr   = ~sr.224
+        Ei    = x.438^(x.439*inv(~sr.224))
+        pkI   = x.441^x.442
+        z     = x.438^x.439
+        z.1   = x.441^(~sr.224*x.442)
+        z.2   = x.438^(~er.223*x.439*inv(~sr.224))
+        z.3   = x.441^(~er.223*x.442)
+    
+    40. ~er   = ~er.223
+        ~sr   = ~sr.224
+        Ei    = x.438^(x.439*inv(~sr.224))
+        pkI   = x.441^inv((~sr.224*x.442))
+        z     = x.438^x.439
+        z.1   = x.441^inv(x.442)
+        z.2   = x.438^(~er.223*x.439*inv(~sr.224))
+        z.3   = x.441^(~er.223*inv((~sr.224*x.442)))
+    
+    41. ~er   = ~er.223
+        ~sr   = ~sr.224
+        Ei    = x.438^(x.439*inv(~sr.224))
+        pkI   = x.441^(x.442*inv(~sr.224))
+        z     = x.438^x.439
+        z.1   = x.441^x.442
+        z.2   = x.438^(~er.223*x.439*inv(~sr.224))
+        z.3   = x.441^(~er.223*x.442*inv(~sr.224))
+    
+    42. ~er   = ~er.224
+        ~sr   = ~sr.225
+        Ei    = x.439^x.440
+        pkI   = x.442^(x.443*inv((~sr.225*x.444)))
+        z     = x.439^(~sr.225*x.440)
+        z.1   = x.442^(x.443*inv(x.444))
+        z.2   = x.439^(~er.224*x.440)
+        z.3   = x.442^(~er.224*x.443*inv((~sr.225*x.444)))
+    
+    43. ~er   = ~er.224
+        ~sr   = ~sr.225
+        Ei    = x.439^inv((~sr.225*x.440))
+        pkI   = x.442^(x.443*inv((~sr.225*x.444)))
+        z     = x.439^inv(x.440)
+        z.1   = x.442^(x.443*inv(x.444))
+        z.2   = x.439^(~er.224*inv((~sr.225*x.440)))
+        z.3   = x.442^(~er.224*x.443*inv((~sr.225*x.444)))
+    
+    44. ~er   = ~er.224
+        ~sr   = ~sr.225
+        Ei    = x.439^(x.440*inv(~sr.225))
+        pkI   = x.442^(x.443*inv((~sr.225*x.444)))
+        z     = x.439^x.440
+        z.1   = x.442^(x.443*inv(x.444))
+        z.2   = x.439^(~er.224*x.440*inv(~sr.225))
+        z.3   = x.442^(~er.224*x.443*inv((~sr.225*x.444)))
+    
+    45. ~er   = ~er.224
+        ~sr   = ~sr.225
+        Ei    = x.439^(x.440*inv((~sr.225*x.441)))
+        pkI   = x.443^x.444
+        z     = x.439^(x.440*inv(x.441))
+        z.1   = x.443^(~sr.225*x.444)
+        z.2   = x.439^(~er.224*x.440*inv((~sr.225*x.441)))
+        z.3   = x.443^(~er.224*x.444)
+    
+    46. ~er   = ~er.224
+        ~sr   = ~sr.225
+        Ei    = x.439^(x.440*inv((~sr.225*x.441)))
+        pkI   = x.443^inv((~sr.225*x.444))
+        z     = x.439^(x.440*inv(x.441))
+        z.1   = x.443^inv(x.444)
+        z.2   = x.439^(~er.224*x.440*inv((~sr.225*x.441)))
+        z.3   = x.443^(~er.224*inv((~sr.225*x.444)))
+    
+    47. ~er   = ~er.224
+        ~sr   = ~sr.225
+        Ei    = x.439^(x.440*inv((~sr.225*x.441)))
+        pkI   = x.443^(x.444*inv(~sr.225))
+        z     = x.439^(x.440*inv(x.441))
+        z.1   = x.443^x.444
+        z.2   = x.439^(~er.224*x.440*inv((~sr.225*x.441)))
+        z.3   = x.443^(~er.224*x.444*inv(~sr.225))
+    
+    48. ~er   = ~er.225
+        ~sr   = ~sr.226
+        Ei    = x.440^(x.441*inv((~sr.226*x.442)))
+        pkI   = x.444^(x.445*inv((~sr.226*x.446)))
+        z     = x.440^(x.441*inv(x.442))
+        z.1   = x.444^(x.445*inv(x.446))
+        z.2   = x.440^(~er.225*x.441*inv((~sr.226*x.442)))
+        z.3   = x.444^(~er.225*x.445*inv((~sr.226*x.446)))
+    
+    49. Ei    = DH_neutral
+        pkI   = DH_neutral
+        z     = DH_neutral
+        z.1   = DH_neutral
+        z.2   = DH_neutral
+        z.3   = DH_neutral
+  */
+
+rule (modulo E) I_2:
+   [
+   St_I_1( $I, $R, ~si, pkR, ~ei, ck3, hT3(pkR, 'g'^~ei, msgS, msgT) ),
+   !Psk( $I, $R, psk ),
+   In( <Er, 
+        aead(kdf3c(kdf1(kdf1(kdf1(ck3, Er), Er^~ei), Er^~si), psk), 'empty',
+             hT5(pkR, 'g'^~ei, msgS, msgT, Er,
+                 kdf3b(kdf1(kdf1(kdf1(ck3, Er), Er^~ei), Er^~si), psk)))
+       >
+   )
+   ]
+  --[
+  I_Done( $I, $R, 'g'^~si, pkR,
+          kdf2a(kdf3a(kdf1(kdf1(kdf1(ck3, Er), Er^~ei), Er^~si), psk), 'kempty'),
+          kdf2b(kdf3a(kdf1(kdf1(kdf1(ck3, Er), Er^~ei), Er^~si), psk), 'kempty')
+  ),
+  SessionKey( $I,
+              kdf2a(kdf3a(kdf1(kdf1(kdf1(ck3, Er), Er^~ei), Er^~si), psk), 'kempty')
+  ),
+  SessionKey( $I,
+              kdf2b(kdf3a(kdf1(kdf1(kdf1(ck3, Er), Er^~ei), Er^~si), psk), 'kempty')
+  )
+  ]->
+   [
+   !Session_I( $I, $R,
+               kdf2a(kdf3a(kdf1(kdf1(kdf1(ck3, Er), Er^~ei), Er^~si), psk), 'kempty'),
+               kdf2b(kdf3a(kdf1(kdf1(kdf1(ck3, Er), Er^~ei), Er^~si), psk), 'kempty')
+   )
+   ]
+
+  /*
+  rule (modulo AC) I_2:
+     [
+     St_I_1( $I, $R, ~si, pkR, ~ei, ck3, hT3(pkR, 'g'^~ei, msgS, msgT) ),
+     !Psk( $I, $R, psk ),
+     In( <Er, 
+          aead(kdf3c(kdf1(kdf1(kdf1(ck3, Er), z), z.1), psk), 'empty',
+               hT5(pkR, 'g'^~ei, msgS, msgT, Er,
+                   kdf3b(kdf1(kdf1(kdf1(ck3, Er), z), z.1), psk)))
+         >
+     )
+     ]
+    --[
+    I_Done( $I, $R, 'g'^~si, pkR,
+            kdf2a(kdf3a(kdf1(kdf1(kdf1(ck3, Er), z), z.1), psk), 'kempty'),
+            kdf2b(kdf3a(kdf1(kdf1(kdf1(ck3, Er), z), z.1), psk), 'kempty')
+    ),
+    SessionKey( $I,
+                kdf2a(kdf3a(kdf1(kdf1(kdf1(ck3, Er), z), z.1), psk), 'kempty')
+    ),
+    SessionKey( $I,
+                kdf2b(kdf3a(kdf1(kdf1(kdf1(ck3, Er), z), z.1), psk), 'kempty')
+    )
+    ]->
+     [
+     !Session_I( $I, $R,
+                 kdf2a(kdf3a(kdf1(kdf1(kdf1(ck3, Er), z), z.1), psk), 'kempty'),
+                 kdf2b(kdf3a(kdf1(kdf1(kdf1(ck3, Er), z), z.1), psk), 'kempty')
+     )
+     ]
+    variants (modulo AC)
+     1. ~ei   = ~ei.17
+        ~si   = ~si.18
+        Er    = Er.19
+        z     = Er.19^~ei.17
+        z.1   = Er.19^~si.18
+    
+     2. ~ei   = ~ei.24
+        ~si   = ~ei.24
+        Er    = z.33^inv(~ei.24)
+        z     = z.33
+        z.1   = z.33
+    
+     3. ~ei   = ~ei.24
+        ~si   = ~si.25
+        Er    = z.33^inv(~ei.24)
+        z     = z.33
+        z.1   = z.33^(~si.25*inv(~ei.24))
+    
+     4. ~ei   = ~ei.25
+        ~si   = ~si.26
+        Er    = z.35^inv(~si.26)
+        z     = z.35^(~ei.25*inv(~si.26))
+        z.1   = z.35
+    
+     5. ~ei   = ~ei.178
+        ~si   = ~si.179
+        Er    = x.351^x.352
+        z     = x.351^(~ei.178*x.352)
+        z.1   = x.351^(~si.179*x.352)
+    
+     6. ~ei   = ~ei.179
+        ~si   = ~ei.179
+        Er    = x.353^inv((~ei.179*x.354))
+        z     = x.353^inv(x.354)
+        z.1   = x.353^inv(x.354)
+    
+     7. ~ei   = ~ei.179
+        ~si   = ~ei.179
+        Er    = x.353^(x.354*inv(~ei.179))
+        z     = x.353^x.354
+        z.1   = x.353^x.354
+    
+     8. ~ei   = ~ei.179
+        ~si   = ~si.180
+        Er    = x.353^inv((~si.180*x.354))
+        z     = x.353^(~ei.179*inv((~si.180*x.354)))
+        z.1   = x.353^inv(x.354)
+    
+     9. ~ei   = ~ei.179
+        ~si   = ~si.180
+        Er    = x.353^(x.354*inv(~si.180))
+        z     = x.353^(~ei.179*x.354*inv(~si.180))
+        z.1   = x.353^x.354
+    
+    10. ~ei   = ~ei.179
+        ~si   = ~si.180
+        Er    = x.354^inv((~ei.179*~si.180))
+        z     = x.354^inv(~si.180)
+        z.1   = x.354^inv(~ei.179)
+    
+    11. ~ei   = ~ei.180
+        ~si   = ~ei.180
+        Er    = x.354^(x.355*inv((~ei.180*x.356)))
+        z     = x.354^(x.355*inv(x.356))
+        z.1   = x.354^(x.355*inv(x.356))
+    
+    12. ~ei   = ~ei.180
+        ~si   = ~si.181
+        Er    = x.354^(x.355*inv((~si.181*x.356)))
+        z     = x.354^(~ei.180*x.355*inv((~si.181*x.356)))
+        z.1   = x.354^(x.355*inv(x.356))
+    
+    13. ~ei   = ~ei.180
+        ~si   = ~si.181
+        Er    = x.355^inv((~ei.180*~si.181*x.356))
+        z     = x.355^inv((~si.181*x.356))
+        z.1   = x.355^inv((~ei.180*x.356))
+    
+    14. ~ei   = ~ei.180
+        ~si   = ~si.181
+        Er    = x.355^inv((~ei.180*x.356))
+        z     = x.355^inv(x.356)
+        z.1   = x.355^(~si.181*inv((~ei.180*x.356)))
+    
+    15. ~ei   = ~ei.180
+        ~si   = ~si.181
+        Er    = x.355^(x.356*inv(~ei.180))
+        z     = x.355^x.356
+        z.1   = x.355^(~si.181*x.356*inv(~ei.180))
+    
+    16. ~ei   = ~ei.180
+        ~si   = ~si.181
+        Er    = x.355^(x.356*inv((~ei.180*~si.181)))
+        z     = x.355^(x.356*inv(~si.181))
+        z.1   = x.355^(x.356*inv(~ei.180))
+    
+    17. ~ei   = ~ei.181
+        ~si   = ~si.182
+        Er    = x.356^(x.357*inv((~ei.181*~si.182*x.358)))
+        z     = x.356^(x.357*inv((~si.182*x.358)))
+        z.1   = x.356^(x.357*inv((~ei.181*x.358)))
+    
+    18. ~ei   = ~ei.181
+        ~si   = ~si.182
+        Er    = x.356^(x.357*inv((~ei.181*x.358)))
+        z     = x.356^(x.357*inv(x.358))
+        z.1   = x.356^(~si.182*x.357*inv((~ei.181*x.358)))
+    
+    19. Er    = DH_neutral
+        z     = DH_neutral
+        z.1   = DH_neutral
+  */
+
+rule (modulo E) I_Transport:
+   [ !Session_I( $I, $R, tkI, tkR ), Fr( ~m ) ]
+  --[ I_Sent( $I, $R, tkI ) ]->
+   [ Out( aead(tkI, ~m, 'transport') ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) R_Transport:
+   [ !Session_R( $I, $R, tkI, tkR ), In( aead(tkI, m, 'transport') ) ]
+  --[ R_Complete( $I, $R, tkI, tkR ) ]->
+   [ ]
+
+  /* has exactly the trivial AC variant */
+
+lemma executable:
+  exists-trace
+  "∃ I R pkI pkR tkI tkR #i #j.
+    ((((I_Done( I, R, pkI, pkR, tkI, tkR ) @ #i) ∧
+       (R_Done( I, R, pkI, pkR, tkI, tkR ) @ #j)) ∧
+      (¬(∃ #r. RevealLtk( I ) @ #r))) ∧
+     (¬(∃ #r. RevealLtk( R ) @ #r))) ∧
+    (¬(∃ A B #r. RevealPsk( A, B ) @ #r))"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ I R pkI pkR tkI tkR #i #j.
+  (I_Done( I, R, pkI, pkR, tkI, tkR ) @ #i) ∧
+  (R_Done( I, R, pkI, pkR, tkI, tkR ) @ #j)
+ ∧
+  (∀ #r. (RevealLtk( I ) @ #r) ⇒ ⊥) ∧
+  (∀ #r. (RevealLtk( R ) @ #r) ⇒ ⊥) ∧
+  (∀ A B #r. (RevealPsk( A, B ) @ #r) ⇒ ⊥)"
+*/
+by sorry
+
+lemma session_key_secrecy:
+  all-traces
+  "∀ I R pkI pkR tkI tkR #i.
+    ((((I_Done( I, R, pkI, pkR, tkI, tkR ) @ #i) ∧
+       (¬(∃ #r. RevealLtk( I ) @ #r))) ∧
+      (¬(∃ #r. RevealLtk( R ) @ #r))) ∧
+     (¬(∃ #r. RevealPsk( I, R ) @ #r))) ⇒
+    (¬(∃ #k. K( tkI ) @ #k))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ I R pkI pkR tkI tkR #i.
+  (I_Done( I, R, pkI, pkR, tkI, tkR ) @ #i)
+ ∧
+  (∀ #r. (RevealLtk( I ) @ #r) ⇒ ⊥) ∧
+  (∀ #r. (RevealLtk( R ) @ #r) ⇒ ⊥) ∧
+  (∀ #r. (RevealPsk( I, R ) @ #r) ⇒ ⊥) ∧
+  (∃ #k. (K( tkI ) @ #k))"
+*/
+by sorry
+
+lemma forward_secrecy:
+  all-traces
+  "∀ I R pkI pkR tkI tkR #i.
+    ((((I_Done( I, R, pkI, pkR, tkI, tkR ) @ #i) ∧
+       (¬(∃ #r. RevealPsk( I, R ) @ #r))) ∧
+      (∀ #r. (RevealLtk( I ) @ #r) ⇒ (#i < #r))) ∧
+     (∀ #r. (RevealLtk( R ) @ #r) ⇒ (#i < #r))) ⇒
+    (¬(∃ #k. K( tkI ) @ #k))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ I R pkI pkR tkI tkR #i.
+  (I_Done( I, R, pkI, pkR, tkI, tkR ) @ #i)
+ ∧
+  (∀ #r. (RevealPsk( I, R ) @ #r) ⇒ ⊥) ∧
+  (∀ #r. (RevealLtk( I ) @ #r) ⇒ #i < #r) ∧
+  (∀ #r. (RevealLtk( R ) @ #r) ⇒ #i < #r) ∧
+  (∃ #k. (K( tkI ) @ #k))"
+*/
+simplify
+solve( St_I_1( $I, $R, ~si, pkR, ~ei, ck3, hT3(pkR, 'g'^~ei, msgS, msgT)
+       ) ▶₀ #i )
+  case I_1
+  solve( !Psk( $I, $R, psk ) ▶₁ #i )
+    case Register_Psk
+    solve( !KU( kdf2a(kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', 'g'^~ei),
+                                                       'g'^(~ei*~s)),
+                                                 'g'^(~s*~si)),
+                                           Er),
+                                      z),
+                                 z.1),
+                            ~psk),
+                      'kempty')
+           ) @ #vk.3 )
+      case c_kdf2a
+      solve( !KU( kdf3a(kdf1(kdf1(kdf1(kdf2a(kdf2a(kdf1('ck0', 'g'^~ei),
+                                                   'g'^(~ei*~s)),
+                                             'g'^(~s*~si)),
+                                       Er),
+                                  z),
+                             z.1),
+                        ~psk)
+             ) @ #vk.4 )
+        case c_kdf3a
+        solve( !KU( ~psk ) @ #vk.7 )
+          case Reveal_Psk
+          by contradiction /* from formulas */
+        qed
+      qed
+    qed
+  qed
+qed
+
+lemma agreement_responder:
+  all-traces
+  "∀ I R pkI pkR tkI tkR #i.
+    (((R_Done( I, R, pkI, pkR, tkI, tkR ) @ #i) ∧
+      (¬(∃ #r. RevealLtk( I ) @ #r))) ∧
+     (¬(∃ #r. RevealLtk( R ) @ #r))) ⇒
+    (∃ #j. (I_Begin( I, R, pkI, pkR ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ I R pkI pkR tkI tkR #i.
+  (R_Done( I, R, pkI, pkR, tkI, tkR ) @ #i)
+ ∧
+  (∀ #r. (RevealLtk( I ) @ #r) ⇒ ⊥) ∧
+  (∀ #r. (RevealLtk( R ) @ #r) ⇒ ⊥) ∧
+  (∀ #j. (I_Begin( I, R, pkI, pkR ) @ #j) ⇒ ¬(#j < #i))"
+*/
+by sorry
+
+lemma kci_responder_commit:
+  all-traces
+  "∀ I R pkI pkR tkI tkR #i.
+    ((R_Done( I, R, pkI, pkR, tkI, tkR ) @ #i) ∧
+     (¬(∃ #r. RevealLtk( I ) @ #r))) ⇒
+    (∃ #j. (I_Begin( I, R, pkI, pkR ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ I R pkI pkR tkI tkR #i.
+  (R_Done( I, R, pkI, pkR, tkI, tkR ) @ #i)
+ ∧
+  (∀ #r. (RevealLtk( I ) @ #r) ⇒ ⊥) ∧
+  (∀ #j. (I_Begin( I, R, pkI, pkR ) @ #j) ⇒ ¬(#j < #i))"
+*/
+by sorry
+
+lemma kci_responder_complete:
+  all-traces
+  "∀ I R tkI tkR #i.
+    ((R_Complete( I, R, tkI, tkR ) @ #i) ∧ (¬(∃ #r. RevealLtk( I ) @ #r))) ⇒
+    (∃ pkI pkR #j. (I_Begin( I, R, pkI, pkR ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ I R tkI tkR #i.
+  (R_Complete( I, R, tkI, tkR ) @ #i)
+ ∧
+  (∀ #r. (RevealLtk( I ) @ #r) ⇒ ⊥) ∧
+  (∀ pkI pkR #j. (I_Begin( I, R, pkI, pkR ) @ #j) ⇒ ¬(#j < #i))"
+*/
+by sorry
+
+/* All wellformedness checks were successful. */
+
+/*
+Generated from:
+Tamarin version 1.12.0
+Maude version 3.2 (unsupported)
+Git revision: 82780bbaf3328a45f624ddb41e51bf75425f851c (with uncommited changes), branch: master
+Compiled at: 2026-03-07 14:22:39.174278293 UTC
+*/
+
+end
+
+==============================================================================
+summary of summaries:
+
+analyzed: 40_wireguard_state.spthy
+
+  processing time: 7.59s
+  
+  executable (exists-trace): analysis incomplete (1 steps)
+  session_key_secrecy (all-traces): analysis incomplete (1 steps)
+  forward_secrecy (all-traces): verified (7 steps)
+  agreement_responder (all-traces): analysis incomplete (1 steps)
+  kci_responder_commit (all-traces): analysis incomplete (1 steps)
+  kci_responder_complete (all-traces): analysis incomplete (1 steps)
+
+==============================================================================

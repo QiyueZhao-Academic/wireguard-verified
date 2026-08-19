@@ -1,0 +1,238 @@
+Linear part:
+dh(pk(x),y) = dh(pk(y),x)
+Completing equations...
+Completed equations:
+dh(pk(x),y) = dh(pk(y),x)
+Convergent part: No equation.
+Process 0 (that is, the initial process):
+{1}new skR: kemsk;
+{2}new skR2: kemsk;
+{3}let pkR: kempk = kempub(skR) in
+{4}let pkR2: kempk = kempub(skR2) in
+{5}out(netk, (pkR,pkR2));
+(
+    {6}!
+    {7}new r: bitstring;
+    {8}let ct: kemct = encapW(pkR,r) in
+    {9}let psk: key = kemssW(r) in
+    {10}event PskInitiator(pkR,psk);
+    {11}out(netk, ct);
+    {12}out(netk, aead(psk,zero_nonce,pskWitness,EMPTY))
+) | (
+    {13}!
+    {14}let sk: kemsk = skR in
+    {15}in(netk, ct_1: kemct);
+    {16}let psk_1: key = decapW(sk,ct_1) in
+    {17}event PskResponder(kempub(sk),psk_1)
+) | (
+    {18}!
+    {19}let sk_1: kemsk = skR2 in
+    {20}in(netk, ct_2: kemct);
+    {21}let psk_2: key = decapW(sk_1,ct_2) in
+    {22}event PskResponder(kempub(sk_1),psk_2)
+)
+
+--  Process 1 (that is, process 0, with let moved downwards):
+{1}new skR: kemsk;
+{2}new skR2: kemsk;
+{4}let pkR2: kempk = kempub(skR2) in
+{3}let pkR: kempk = kempub(skR) in
+{5}out(netk, (pkR,pkR2));
+(
+    {6}!
+    {7}new r: bitstring;
+    {9}let psk: key = kemssW(r) in
+    {10}event PskInitiator(pkR,psk);
+    {8}let ct: kemct = encapW(pkR,r) in
+    {11}out(netk, ct);
+    {12}out(netk, aead(psk,zero_nonce,pskWitness,EMPTY))
+) | (
+    {13}!
+    {15}in(netk, ct_1: kemct);
+    {14}let sk: kemsk = skR in
+    {16}let psk_1: key = decapW(sk,ct_1) in
+    {17}event PskResponder(kempub(sk),psk_1)
+) | (
+    {18}!
+    {20}in(netk, ct_2: kemct);
+    {19}let sk_1: kemsk = skR2 in
+    {21}let psk_2: key = decapW(sk_1,ct_2) in
+    {22}event PskResponder(kempub(sk_1),psk_2)
+)
+
+-- Query not attacker(pskWitness[]) in process 1.
+Translating the process into Horn clauses...
+Termination warning: Selecting an hypothesis matching the conclusion.
+In case of non-termination, try a noselect declaration implying the following one:
+   noselect r_1:bitstring, p1:kempk; attacker(encapW(*p1,*r_1)).
+Completing...
+Starting query not attacker(pskWitness[])
+goal reachable: attacker(pskWitness[])
+
+Derivation:
+Abbreviations:
+r_1 = r[!1 = @sid]
+
+1. Using the function EMPTY the attacker may obtain EMPTY.
+attacker(EMPTY).
+
+2. The message aead(kemssW(r_1),zero_nonce,pskWitness[],EMPTY) may be sent to the attacker at output {12}.
+attacker(aead(kemssW(r_1),zero_nonce,pskWitness[],EMPTY)).
+
+3. Using the function zero_nonce the attacker may obtain zero_nonce.
+attacker(zero_nonce).
+
+4. The attacker has some term sk_2.
+attacker(sk_2).
+
+5. By 4, the attacker may know sk_2.
+Using the function kempub the attacker may obtain kempub(sk_2).
+attacker(kempub(sk_2)).
+
+6. The message encapW(kempub(skR[]),r_1) may be sent to the attacker at output {11}.
+attacker(encapW(kempub(skR[]),r_1)).
+
+7. By 6, the attacker may know encapW(kempub(skR[]),r_1).
+By 5, the attacker may know kempub(sk_2).
+Using the function reencap the attacker may obtain encapW(kempub(sk_2),r_1).
+attacker(encapW(kempub(sk_2),r_1)).
+
+8. By 4, the attacker may know sk_2.
+By 7, the attacker may know encapW(kempub(sk_2),r_1).
+Using the function decapW the attacker may obtain kemssW(r_1).
+attacker(kemssW(r_1)).
+
+9. By 8, the attacker may know kemssW(r_1).
+By 3, the attacker may know zero_nonce.
+By 2, the attacker may know aead(kemssW(r_1),zero_nonce,pskWitness[],EMPTY).
+By 1, the attacker may know EMPTY.
+Using the function aead_dec the attacker may obtain pskWitness[].
+attacker(pskWitness[]).
+
+10. By 9, attacker(pskWitness[]).
+The goal is reached, represented in the following fact:
+attacker(pskWitness[]).
+
+
+A more detailed output of the traces is available with
+  set traceDisplay = long.
+
+new skR: kemsk creating skR_1 at {1}
+
+new skR2: kemsk creating skR2_1 at {2}
+
+out(netk, (~M,~M_1)) with ~M = kempub(skR_1), ~M_1 = kempub(skR2_1) at {5}
+
+new r: bitstring creating r_2 at {7} in copy a
+
+event PskInitiator(kempub(skR_1),kemssW(r_2)) at {10} in copy a
+
+out(netk, ~M_2) with ~M_2 = encapW(kempub(skR_1),r_2) at {11} in copy a
+
+out(netk, ~M_3) with ~M_3 = aead(kemssW(r_2),zero_nonce,pskWitness,EMPTY) at {12} in copy a
+
+The attacker has the message aead_dec(decapW(a_1,reencap(~M_2,kempub(a_1))),zero_nonce,~M_3,EMPTY) = pskWitness.
+A trace has been found.
+RESULT not attacker(pskWitness[]) is false.
+-- Query event(PskResponder(p,k)) ==> event(PskInitiator(p,k)) || attacker(k) in process 1.
+Translating the process into Horn clauses...
+Termination warning: Selecting an hypothesis matching the conclusion.
+In case of non-termination, try a noselect declaration implying the following one:
+   noselect r_1:bitstring, p1:kempk; attacker(encapW(*p1,*r_1)).
+Completing...
+Starting query event(PskResponder(p,k)) ==> event(PskInitiator(p,k)) || attacker(k)
+Inside query: trying to prove attacker(kemssW(r_1)) from attacker(r_1)
+Completing...
+Inside query: proof succeeded
+Inside query: trying to prove attacker(kemssW(r[!1 = @sid]))
+Completing...
+Inside query: proof failed
+goal reachable: b-event(PskInitiator(kempub(skR[]),kemssW(r_1))) -> event(PskResponder(kempub(skR2[]),kemssW(r_1)))
+Abbreviations:
+r_1 = r[!1 = @sid]
+
+Derivation:
+Abbreviations:
+r_1 = r[!1 = @sid]
+
+1. The attacker initially knows netk[].
+attacker(netk[]).
+
+2. The message (kempub(skR[]),kempub(skR2[])) may be sent on channel netk[] at output {5}.
+mess(netk[],(kempub(skR[]),kempub(skR2[]))).
+
+3. By 1, the attacker may have the channel netk[].
+By 2, the message (kempub(skR[]),kempub(skR2[])) may be sent on this channel.
+So the attacker may obtain the message (kempub(skR[]),kempub(skR2[])) by listening on this channel.
+attacker((kempub(skR[]),kempub(skR2[]))).
+
+4. By 3, the attacker may know (kempub(skR[]),kempub(skR2[])).
+Using the function 2-proj-2-tuple the attacker may obtain kempub(skR2[]).
+attacker(kempub(skR2[])).
+
+5. The event PskInitiator(kempub(skR[]),kemssW(r_1)) may be executed at {10}.
+So the message encapW(kempub(skR[]),r_1) may be sent on channel netk[] at output {11}.
+mess(netk[],encapW(kempub(skR[]),r_1)).
+
+6. By 1, the attacker may have the channel netk[].
+By 5, the message encapW(kempub(skR[]),r_1) may be sent on this channel.
+So the attacker may obtain the message encapW(kempub(skR[]),r_1) by listening on this channel.
+attacker(encapW(kempub(skR[]),r_1)).
+
+7. By 6, the attacker may know encapW(kempub(skR[]),r_1).
+By 4, the attacker may know kempub(skR2[]).
+Using the function reencap the attacker may obtain encapW(kempub(skR2[]),r_1).
+attacker(encapW(kempub(skR2[]),r_1)).
+
+8. By 1, the attacker may have the channel netk[].
+By 7, the attacker may have the message encapW(kempub(skR2[]),r_1).
+So the attacker may send this message on this channel.
+mess(netk[],encapW(kempub(skR2[]),r_1)).
+
+9. The message encapW(kempub(skR2[]),r_1) that may be sent on channel netk[] by 8 may be received at input {20}.
+So event PskResponder(kempub(skR2[]),kemssW(r_1)) may be executed at {22}.
+event(PskResponder(kempub(skR2[]),kemssW(r_1))).
+
+10. By 9, event(PskResponder(kempub(skR2[]),kemssW(r_1))).
+The goal is reached, represented in the following fact:
+event(PskResponder(kempub(skR2[]),kemssW(r_1))).
+
+
+A more detailed output of the traces is available with
+  set traceDisplay = long.
+
+new skR: kemsk creating skR_1 at {1}
+
+new skR2: kemsk creating skR2_1 at {2}
+
+out(netk, (~M,~M_1)) with ~M = kempub(skR_1), ~M_1 = kempub(skR2_1) at {5}
+
+new r: bitstring creating r_2 at {7} in copy a
+
+event PskInitiator(kempub(skR_1),kemssW(r_2)) at {10} in copy a
+
+out(netk, ~M_2) with ~M_2 = encapW(kempub(skR_1),r_2) at {11} in copy a
+
+out(netk, ~M_3) with ~M_3 = aead(kemssW(r_2),zero_nonce,pskWitness,EMPTY) at {12} in copy a
+
+in(netk, reencap(~M_2,~M_1)) with reencap(~M_2,~M_1) = encapW(kempub(skR2_1),r_2) at {20} in copy a_1
+
+event PskResponder(kempub(skR2_1),kemssW(r_2)) at {22} in copy a_1 (goal)
+
+The event PskResponder(kempub(skR2_1),kemssW(r_2)) is executed at {22} in copy a_1.
+A trace has been found.
+I could not confirm that the previous trace falsifies the query.
+Inside query: trying to prove attacker(kemssW(r_1)) from attacker(r_1)
+Completing...
+Inside query: proof succeeded
+RESULT event(PskResponder(p,k)) ==> event(PskInitiator(p,k)) || attacker(k) cannot be proved.
+
+--------------------------------------------------------------
+Verification summary:
+
+Query not attacker(pskWitness[]) is false.
+
+Query event(PskResponder(p,k)) ==> event(PskInitiator(p,k)) || attacker(k) cannot be proved.
+
+--------------------------------------------------------------
+

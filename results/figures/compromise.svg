@@ -1,0 +1,24 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='700' height='250' viewBox='0 0 700 250'>
+<rect width='700' height='250' fill='white'/>
+<text x='20' y='24' font-family='Helvetica,Arial,sans-serif' font-size='13' fill='#1a1a1a' text-anchor='start' font-weight='bold'>Attacker capability over time, and the queries that use it</text>
+<rect x='40' y='46' width='300' height='34' fill='#2f6f4e' opacity='0.14'/>
+<rect x='340' y='46' width='320' height='34' fill='#a33a2a' opacity='0.14'/>
+<text x='190.0' y='68' font-family='Helvetica,Arial,sans-serif' font-size='11' fill='#1a1a1a' text-anchor='middle' font-weight='bold'>phase 0 -- sessions run</text>
+<text x='500.0' y='68' font-family='Helvetica,Arial,sans-serif' font-size='11' fill='#1a1a1a' text-anchor='middle' font-weight='bold'>phase 1 -- after the fact</text>
+<line x1='340' y1='40' x2='340' y2='210' stroke='#a33a2a' stroke-width='1.4' stroke-dasharray='5,4'/>
+<text x='40' y='100' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='start' font-weight='normal'>Dolev-Yao network control; every ephemeral public value travels in clear</text>
+<text x='348' y='100' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#a33a2a' text-anchor='start' font-weight='normal'>static scalars released;</text>
+<text x='348' y='113' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#a33a2a' text-anchor='start' font-weight='normal'>discrete-logarithm oracle exposed</text>
+<text x='40' y='143' font-family='Helvetica,Arial,sans-serif' font-size='9.5' fill='#1a1a1a' text-anchor='start' font-weight='normal'>P3  forward secrecy</text>
+<text x='348' y='143' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='start' font-weight='normal'>statics released</text>
+<text x='660' y='143' font-family='Helvetica,Arial,sans-serif' font-size='9.5' fill='#2f6f4e' text-anchor='end' font-weight='bold'>proved</text>
+<text x='40' y='167' font-family='Helvetica,Arial,sans-serif' font-size='9.5' fill='#1a1a1a' text-anchor='start' font-weight='normal'>P4  post-quantum FS, psk secret</text>
+<text x='348' y='167' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='start' font-weight='normal'>+ DL oracle</text>
+<text x='660' y='167' font-family='Helvetica,Arial,sans-serif' font-size='9.5' fill='#2f6f4e' text-anchor='end' font-weight='bold'>proved</text>
+<text x='40' y='191' font-family='Helvetica,Arial,sans-serif' font-size='9.5' fill='#1a1a1a' text-anchor='start' font-weight='normal'>P4c same, psk published</text>
+<text x='348' y='191' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='start' font-weight='normal'>+ DL oracle</text>
+<text x='660' y='191' font-family='Helvetica,Arial,sans-serif' font-size='9.5' fill='#a33a2a' text-anchor='end' font-weight='bold'>attack found</text>
+<text x='40' y='215' font-family='Helvetica,Arial,sans-serif' font-size='9.5' fill='#1a1a1a' text-anchor='start' font-weight='normal'>S6a/S6b  KCI</text>
+<text x='348' y='215' font-family='Helvetica,Arial,sans-serif' font-size='9' fill='#6b6b6b' text-anchor='start' font-weight='normal'>responder static, at any time</text>
+<text x='660' y='215' font-family='Helvetica,Arial,sans-serif' font-size='9.5' fill='#6b6b6b' text-anchor='end' font-weight='bold'>the gap</text>
+</svg>

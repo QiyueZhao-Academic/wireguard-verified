@@ -1,0 +1,174 @@
+(* ------------------------------------------------------------------------- *)
+(* wireguard_core.pvl                                                        *)
+(*                                                                           *)
+(* The WireGuard (Noise_IKpsk2) handshake as a pair of ProVerif processes,    *)
+(* shared verbatim by every query file in models/proverif/.                  *)
+(*                                                                           *)
+(* Why the protocol lives in a library rather than being copied into each     *)
+(* query file: the project's claim is that differences between verification   *)
+(* outcomes are attributable to the property being checked, not to accidental *)
+(* differences in how the protocol was transcribed.  A single shared source   *)
+(* makes that claim structural rather than a promise.                        *)
+(*                                                                           *)
+(* Message layout follows the WireGuard whitepaper (Donenfeld, NDSS 2017),    *)
+(* section 5.4.  The correspondence between each term below and each byte     *)
+(* range on the wire is tabulated in docs/wire-to-model.md and mechanically   *)
+(* re-checked by scripts/verify_wire_table.py.                               *)
+(* ------------------------------------------------------------------------- *)
+
+(* Public network under full Dolev-Yao control. *)
+free net: channel.
+
+(* --- Events ---------------------------------------------------------------
+   Authentication is stated in Lowe's hierarchy, so each role needs a begin
+   marker (intent) and a done marker (completion).  The arguments are exactly
+   the values the two parties are required to agree upon.                    *)
+
+event InitiatorBegin(G, G).
+event InitiatorDone(G, G, key, key).
+event ResponderBegin(G, G, key, key).
+event ResponderDone(G, G, key, key).
+
+(* Compromise is an explicit attacker-triggerable action rather than a
+   built-in capability, so each query can state precisely which compromises
+   it tolerates.                                                             *)
+event CompromiseStatic(G).
+event CompromisePsk.
+
+(* --- Secrecy witnesses -----------------------------------------------------
+   Each role sends one private name encrypted under its outbound transport
+   key.  attacker(witnessI) is then precisely "the attacker derived the
+   initiator-to-responder transport key".                                    *)
+free witnessI: bitstring [private].
+free witnessR: bitstring [private].
+
+(* ========================================================================== *)
+(* Initiator                                                                  *)
+(* ========================================================================== *)
+(* si, Si : own static scalar and public value
+   Sr     : peer static public value, known in advance -- this prior knowledge
+            is what makes the pattern IK rather than XX
+   psk    : pre-shared key                                                    *)
+
+let Initiator(si: exponent, Si: G, Sr: G, psk: key) =
+    event InitiatorBegin(Si, Sr);
+
+    (* ---- message 1 : handshake initiation, 148 B ------------------------- *)
+    new ei: exponent;
+    let Ei  = pk(ei) in
+    let ck1 = kdf1(CK0, g2b(Ei)) in
+    let hi1 = hT1(Sr, Ei) in
+
+    (* es = DH(ei, Sr) -- binds the message to the intended responder *)
+    let es  = dh(Sr, ei) in
+    let ck2 = kdf2a(ck1, k2b(es)) in
+    let k1  = kdf2b(ck1, k2b(es)) in
+
+    (* encrypted_static (48 B): the initiator's identity never appears in
+       clear.  This field is the object of the identity-hiding query P8.     *)
+    let msgStatic = aead(k1, zero_nonce, g2b(Si), hi1) in
+    let hi2 = hT2(Sr, Ei, msgStatic) in
+
+    (* ss = DH(si, Sr) -- the static-static term that gives IK its
+       first-message authentication.                                         *)
+    let ss  = dh(Sr, si) in
+    let ck3 = kdf2a(ck2, k2b(ss)) in
+    let k2  = kdf2b(ck2, k2b(ss)) in
+
+    (* encrypted_timestamp (28 B): TAI64N, strictly increasing per peer.
+       Modelled as a fresh name, since freshness is what the responder checks. *)
+    new tai64n: bitstring;
+    let msgTs = aead(k2, zero_nonce, tai64n, hi2) in
+    let hi3   = hT3(Sr, Ei, msgStatic, msgTs) in
+
+    (* mac1 is keyed by HASH(LABEL_MAC1 || Sr), derivable by anyone holding
+       the responder's static public key.  It suppresses unsolicited traffic
+       and carries no cryptographic authentication.                          *)
+    let mac1 = mac(hash(concat(LABEL_MAC1, g2b(Sr))),
+                   concat(g2b(Ei), concat(msgStatic, msgTs))) in
+
+    out(net, (Ei, msgStatic, msgTs, mac1));
+
+    (* ---- message 2 : handshake response, 92 B ---------------------------- *)
+    in(net, (Er: G, msgEmpty: bitstring, mac1r: bitstring));
+    let ck4 = kdf1(ck3, g2b(Er)) in
+    let hi4 = hT4(Sr, Ei, msgStatic, msgTs, Er) in
+    let ck5 = kdf1(ck4, k2b(dh(Er, ei))) in   (* ee = DH(ei, Er) *)
+    let ck6 = kdf1(ck5, k2b(dh(Er, si))) in   (* se = DH(si, Er) *)
+
+    (* psk mixing.  KDF_3 yields (chaining key, tau, kappa); tau enters the
+       transcript hash, so a mismatched psk makes the AEAD below fail.  This
+       is the step that carries post-quantum forward secrecy.                *)
+    let ck7 = kdf3a(ck6, k2b(psk)) in
+    let tau = kdf3b(ck6, k2b(psk)) in
+    let k3  = kdf3c(ck6, k2b(psk)) in
+    let hi5 = hT5(Sr, Ei, msgStatic, msgTs, Er, tau) in
+
+    (* Decrypting the empty payload is the initiator's evidence that the
+       responder holds the same psk and saw the same transcript.             *)
+    let (=EMPTY) = aead_dec(k3, zero_nonce, msgEmpty, hi5) in
+
+    (* ---- transport keys --------------------------------------------------- *)
+    let tkI = kdf2a(ck7, KEMPTY) in   (* initiator -> responder *)
+    let tkR = kdf2b(ck7, KEMPTY) in   (* responder -> initiator *)
+    event InitiatorDone(Si, Sr, tkI, tkR);
+    out(net, aead(tkI, zero_nonce, witnessI, EMPTY)).
+
+(* ========================================================================== *)
+(* Responder                                                                  *)
+(* ========================================================================== *)
+
+let Responder(sr: exponent, Sr: G, psk: key) =
+    in(net, (Ei: G, msgStatic: bitstring, msgTs: bitstring, mac1: bitstring));
+
+    let ck1 = kdf1(CK0, g2b(Ei)) in
+    let hr1 = hT1(Sr, Ei) in
+
+    let es  = dh(Ei, sr) in
+    let ck2 = kdf2a(ck1, k2b(es)) in
+    let k1  = kdf2b(ck1, k2b(es)) in
+
+    (* Pattern-matching the [data] constructor g2b enforces that the recovered
+       plaintext is a well-formed 32-byte public value, mirroring the length
+       check the implementation performs.                                    *)
+    let g2b(Si) = aead_dec(k1, zero_nonce, msgStatic, hr1) in
+    let hr2 = hT2(Sr, Ei, msgStatic) in
+
+    let ss  = dh(Si, sr) in
+    let ck3 = kdf2a(ck2, k2b(ss)) in
+    let k2  = kdf2b(ck2, k2b(ss)) in
+
+    let tai64n = aead_dec(k2, zero_nonce, msgTs, hr2) in
+    let hr3 = hT3(Sr, Ei, msgStatic, msgTs) in
+
+    (* ---- message 2 -------------------------------------------------------- *)
+    new er: exponent;
+    let Er  = pk(er) in
+    let ck4 = kdf1(ck3, g2b(Er)) in
+    let hr4 = hT4(Sr, Ei, msgStatic, msgTs, Er) in
+    let ck5 = kdf1(ck4, k2b(dh(Ei, er))) in
+    let ck6 = kdf1(ck5, k2b(dh(Si, er))) in
+
+    let ck7 = kdf3a(ck6, k2b(psk)) in
+    let tau = kdf3b(ck6, k2b(psk)) in
+    let k3  = kdf3c(ck6, k2b(psk)) in
+    let hr5 = hT5(Sr, Ei, msgStatic, msgTs, Er, tau) in
+
+    let msgEmpty = aead(k3, zero_nonce, EMPTY, hr5) in
+    let mac1r = mac(hash(concat(LABEL_MAC1, g2b(Si))), concat(g2b(Er), msgEmpty)) in
+
+    let tkI = kdf2a(ck7, KEMPTY) in
+    let tkR = kdf2b(ck7, KEMPTY) in
+
+    (* The responder has committed to the key material by the time message 2
+       leaves the host, so ResponderBegin is emitted here.                    *)
+    event ResponderBegin(Si, Sr, tkI, tkR);
+    out(net, (Er, msgEmpty, mac1r));
+
+    (* WireGuard treats a session as usable once a valid transport record
+       arrives.  Requiring that record before ResponderDone is what makes
+       injective agreement a meaningful question on the responder side.       *)
+    in(net, (ct: bitstring));
+    let pt = aead_dec(tkI, zero_nonce, ct, EMPTY) in
+    event ResponderDone(Si, Sr, tkI, tkR);
+    out(net, aead(tkR, zero_nonce, witnessR, EMPTY)).

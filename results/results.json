@@ -1,0 +1,175 @@
+{
+  "schema": 1,
+  "entries": [
+    {
+      "tool": "proverif",
+      "source": "20_secrecy.out",
+      "query": "not attacker(witnessI[])",
+      "outcome": "proved",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "20_secrecy.out",
+      "query": "not attacker(witnessR[])",
+      "outcome": "proved",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "21_forward_secrecy.out",
+      "query": "not attacker_p1(witnessI[])",
+      "outcome": "proved",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "21_forward_secrecy.out",
+      "query": "not attacker_p1(witnessR[])",
+      "outcome": "proved",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "22_pq_forward_secrecy.out",
+      "query": "not attacker_p1(witnessI[])",
+      "outcome": "proved",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "22_pq_forward_secrecy.out",
+      "query": "not attacker_p1(witnessR[])",
+      "outcome": "proved",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "23_pq_fs_nopsk.out",
+      "query": "not attacker_p1(witnessI[])",
+      "outcome": "attack_found",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "23_pq_fs_nopsk.out",
+      "query": "not attacker_p1(witnessR[])",
+      "outcome": "attack_found",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "24a_aliveness.out",
+      "query": null,
+      "outcome": "nonterminating",
+      "reason": "budget exhausted mid-saturation",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "24b_agreement.out",
+      "query": "event(ResponderDone(si_1,sr_1,ki,kr)) ==> event(InitiatorBegin(si_1,sr_1))",
+      "outcome": "proved",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "24c_inj_agreement.out",
+      "query": "inj-event(ResponderDone(si_1,sr_1,ki,kr)) ==> inj-event(InitiatorBegin(si_1,sr_1))",
+      "outcome": "proved",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "25a_kci_commit.out",
+      "query": null,
+      "outcome": "nonterminating",
+      "reason": "budget exhausted mid-saturation",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "25b_kci_complete.out",
+      "query": null,
+      "outcome": "nonterminating",
+      "reason": "budget exhausted mid-saturation",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "30_kem_psk_ideal.out",
+      "query": "not attacker(pskWitness[])",
+      "outcome": "proved",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "30_kem_psk_ideal.out",
+      "query": "event(PskResponder(p,k)) ==> event(PskInitiator(p,k)) || attacker(k)",
+      "outcome": "inconclusive",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "31_kem_psk_reencap.out",
+      "query": "not attacker(pskWitness[])",
+      "outcome": "attack_found",
+      "elapsed_s": null
+    },
+    {
+      "tool": "proverif",
+      "source": "31_kem_psk_reencap.out",
+      "query": "event(PskResponder(p,k)) ==> event(PskInitiator(p,k)) || attacker(k)",
+      "outcome": "inconclusive",
+      "elapsed_s": null
+    },
+    {
+      "tool": "tamarin",
+      "source": "tamarin_agreement_responder.out",
+      "query": "agreement_responder",
+      "outcome": "proved",
+      "steps": 18,
+      "elapsed_s": null
+    },
+    {
+      "tool": "tamarin",
+      "source": "tamarin_executable.out",
+      "query": "executable",
+      "outcome": "proved",
+      "steps": 12,
+      "elapsed_s": null
+    },
+    {
+      "tool": "tamarin",
+      "source": "tamarin_forward_secrecy.out",
+      "query": "forward_secrecy",
+      "outcome": "proved",
+      "steps": 7,
+      "elapsed_s": null
+    },
+    {
+      "tool": "tamarin",
+      "source": "tamarin_kci_responder_commit.out",
+      "query": "kci_responder_commit",
+      "outcome": "attack_found",
+      "steps": 18,
+      "elapsed_s": null
+    },
+    {
+      "tool": "tamarin",
+      "source": "tamarin_kci_responder_complete.out",
+      "query": "kci_responder_complete",
+      "outcome": "proved",
+      "steps": 17,
+      "elapsed_s": null
+    },
+    {
+      "tool": "tamarin",
+      "source": "tamarin_session_key_secrecy.out",
+      "query": "session_key_secrecy",
+      "outcome": "proved",
+      "steps": 7,
+      "elapsed_s": null
+    }
+  ]
+}

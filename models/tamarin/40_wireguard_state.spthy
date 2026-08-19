@@ -1,0 +1,236 @@
+theory WireGuard_IKpsk2
+begin
+
+/*
+  ---------------------------------------------------------------------------
+  WireGuard handshake (Noise_IKpsk2) in Tamarin.
+
+  This model exists to answer questions the ProVerif model in
+  models/proverif/ cannot: those that need explicit mutable state.  The
+  handshake itself is transcribed to match the ProVerif core term for term,
+  so that any difference in outcome is attributable to the verifier rather
+  than to modelling choices.  docs/tool-comparison.md records the places
+  where the two transcriptions could not be made identical and why.
+
+  Deliberate differences from the ProVerif model:
+
+    - Diffie-Hellman uses Tamarin's built-in DH equational theory rather than
+      the two-symbol pk/dh encoding.  Tamarin normalises DH terms natively,
+      so the term-depth problem that forced the pk/dh encoding in ProVerif
+      (see docs/model-notes.md) does not arise here.
+
+    - Compromise is expressed by rules with action facts, so a lemma can
+      quantify over the order of compromise and session events.  This is
+      what makes forward secrecy statable without ProVerif's phase mechanism.
+  ---------------------------------------------------------------------------
+*/
+
+builtins: diffie-hellman
+
+functions: aead/3, kdf1/2, kdf2a/2, kdf2b/2, kdf3a/2, kdf3b/2, kdf3c/2,
+           hT1/2, hT2/3, hT3/4, hT4/5, hT5/6, mac/2
+
+/* ===== Key infrastructure ================================================ */
+
+rule Register_Static:
+    [ Fr(~s) ]
+  --[ RegisterStatic($A) ]->
+    [ !Ltk($A, ~s), !Pk($A, 'g'^~s), Out('g'^~s) ]
+
+/* A pre-shared key is configured per peer pair, as `wg set peer ...
+   preshared-key` does. */
+rule Register_Psk:
+    [ Fr(~psk) ]
+  --[ RegisterPsk($A, $B) ]->
+    [ !Psk($A, $B, ~psk) ]
+
+rule Reveal_Ltk:
+    [ !Ltk(A, s) ]
+  --[ RevealLtk(A) ]->
+    [ Out(s) ]
+
+rule Reveal_Psk:
+    [ !Psk(A, B, psk) ]
+  --[ RevealPsk(A, B) ]->
+    [ Out(psk) ]
+
+/* ===== Handshake ========================================================= */
+
+/* --- message 1 : handshake initiation, 148 B on the wire ---------------- */
+rule I_1:
+  let pkI  = 'g'^~si
+      Ei   = 'g'^~ei
+      ck1  = kdf1('ck0', Ei)
+      hh1  = hT1(pkR, Ei)
+      es   = pkR^~ei                      // DH(ei, Sr)
+      ck2  = kdf2a(ck1, es)
+      k1   = kdf2b(ck1, es)
+      msgS = aead(k1, pkI, hh1)           // encrypted_static, 48 B
+      hh2  = hT2(pkR, Ei, msgS)
+      ss   = pkR^~si                      // DH(si, Sr)
+      ck3  = kdf2a(ck2, ss)
+      k2   = kdf2b(ck2, ss)
+      msgT = aead(k2, ~ts, hh2)           // encrypted_timestamp, 28 B
+      hh3  = hT3(pkR, Ei, msgS, msgT)
+      m1   = mac(hT1('mac1', pkR), <Ei, msgS, msgT>)
+  in
+    [ Fr(~ei), Fr(~ts), !Ltk($I, ~si), !Pk($R, pkR) ]
+  --[ I_Begin($I, $R, pkI, pkR) ]->
+    [ Out(<Ei, msgS, msgT, m1>)
+    , St_I_1($I, $R, ~si, pkR, ~ei, ck3, hh3) ]
+
+/* --- message 2 : handshake response, 92 B on the wire -------------------
+   The responder both consumes message 1 and emits message 2 in one rule:
+   WireGuard's responder keeps no state between the two, which is precisely
+   what makes it stateless under load and is the basis of the cookie
+   mechanism.  Modelling it as one rule records that design property. */
+rule R_1:
+  let pkR  = 'g'^~sr
+      ck1  = kdf1('ck0', Ei)
+      hh1  = hT1(pkR, Ei)
+      es   = Ei^~sr
+      ck2  = kdf2a(ck1, es)
+      k1   = kdf2b(ck1, es)
+      msgS = aead(k1, pkI, hh1)           // unifies, recovering pkI
+      hh2  = hT2(pkR, Ei, msgS)
+      ss   = pkI^~sr
+      ck3  = kdf2a(ck2, ss)
+      k2   = kdf2b(ck2, ss)
+      msgT = aead(k2, ts, hh2)
+      hh3  = hT3(pkR, Ei, msgS, msgT)
+      Er   = 'g'^~er
+      ck4  = kdf1(ck3, Er)
+      hh4  = hT4(pkR, Ei, msgS, msgT, Er)
+      ck5  = kdf1(ck4, Ei^~er)            // ee = DH(er, Ei)
+      ck6  = kdf1(ck5, pkI^~er)           // se = DH(er, Si)
+      ck7  = kdf3a(ck6, psk)
+      tau  = kdf3b(ck6, psk)
+      k3   = kdf3c(ck6, psk)
+      hh5  = hT5(pkR, Ei, msgS, msgT, Er, tau)
+      msgE = aead(k3, 'empty', hh5)
+      tkI  = kdf2a(ck7, 'kempty')
+      tkR  = kdf2b(ck7, 'kempty')
+  in
+    [ Fr(~er), !Ltk($R, ~sr), !Pk($I, pkI), !Psk($I, $R, psk)
+    , In(<Ei, msgS, msgT, m1>) ]
+  --[ R_Done($I, $R, pkI, pkR, tkI, tkR)
+    , SessionKey($R, tkI), SessionKey($R, tkR)
+    , UsesPsk($I, $R) ]->
+    [ Out(<Er, msgE>)
+    , !Session_R($I, $R, tkI, tkR) ]
+
+/* --- initiator completes ------------------------------------------------ */
+rule I_2:
+  let pkI  = 'g'^~si
+      Ei   = 'g'^~ei
+      hh4  = hT4(pkR, Ei, msgS, msgT, Er)
+      ck4  = kdf1(ck3, Er)
+      ck5  = kdf1(ck4, Er^~ei)
+      ck6  = kdf1(ck5, Er^~si)
+      ck7  = kdf3a(ck6, psk)
+      tau  = kdf3b(ck6, psk)
+      k3   = kdf3c(ck6, psk)
+      hh5  = hT5(pkR, Ei, msgS, msgT, Er, tau)
+      msgE = aead(k3, 'empty', hh5)
+      tkI  = kdf2a(ck7, 'kempty')
+      tkR  = kdf2b(ck7, 'kempty')
+  in
+    [ St_I_1($I, $R, ~si, pkR, ~ei, ck3, hT3(pkR, Ei, msgS, msgT))
+    , !Psk($I, $R, psk)
+    , In(<Er, msgE>) ]
+  --[ I_Done($I, $R, pkI, pkR, tkI, tkR)
+    , SessionKey($I, tkI), SessionKey($I, tkR) ]->
+    [ !Session_I($I, $R, tkI, tkR) ]
+
+/* --- transport records ---------------------------------------------------
+   WireGuard treats a session as usable only once a transport record arrives
+   under the derived key.  Modelling that step explicitly is what lets the
+   two KCI lemmas below separate: committing key material and accepting
+   traffic are different events, and the protocol's KCI resistance lives in
+   the gap between them. */
+rule I_Transport:
+    [ !Session_I($I, $R, tkI, tkR), Fr(~m) ]
+  --[ I_Sent($I, $R, tkI) ]->
+    [ Out(aead(tkI, ~m, 'transport')) ]
+
+rule R_Transport:
+    [ !Session_R($I, $R, tkI, tkR), In(aead(tkI, m, 'transport')) ]
+  --[ R_Complete($I, $R, tkI, tkR) ]->
+    [ ]
+
+/* ===== Lemmas ============================================================ */
+
+/* Sanity: the model admits a complete honest run.  Without this, a vacuous
+   "everything is proved" result would be indistinguishable from a model in
+   which no rule can fire. */
+lemma executable:
+  exists-trace
+  "Ex I R pkI pkR tkI tkR #i #j.
+      I_Done(I, R, pkI, pkR, tkI, tkR) @ i
+    & R_Done(I, R, pkI, pkR, tkI, tkR) @ j
+    & not (Ex #r. RevealLtk(I) @ r)
+    & not (Ex #r. RevealLtk(R) @ r)
+    & not (Ex A B #r. RevealPsk(A, B) @ r)"
+
+/* P1 -- session-key secrecy.  No transport key agreed between two parties
+   whose long-term keys and shared psk are all uncompromised is ever known
+   to the adversary. */
+lemma session_key_secrecy:
+  "All I R pkI pkR tkI tkR #i.
+      I_Done(I, R, pkI, pkR, tkI, tkR) @ i
+    & not (Ex #r. RevealLtk(I) @ r)
+    & not (Ex #r. RevealLtk(R) @ r)
+    & not (Ex #r. RevealPsk(I, R) @ r)
+   ==> not (Ex #k. K(tkI) @ k)"
+
+/* P3 -- forward secrecy.  Same statement, but long-term compromise is
+   permitted provided it happens strictly after the session completed.  The
+   ephemeral-ephemeral term is what carries the property. */
+lemma forward_secrecy:
+  "All I R pkI pkR tkI tkR #i.
+      I_Done(I, R, pkI, pkR, tkI, tkR) @ i
+    & not (Ex #r. RevealPsk(I, R) @ r)
+    & (All #r. RevealLtk(I) @ r ==> i < r)
+    & (All #r. RevealLtk(R) @ r ==> i < r)
+   ==> not (Ex #k. K(tkI) @ k)"
+
+/* P5b -- agreement of the responder with the initiator, no compromise.
+   Stated at the point where the responder commits transport keys to a
+   session it attributes to I. */
+lemma agreement_responder:
+  "All I R pkI pkR tkI tkR #i.
+      R_Done(I, R, pkI, pkR, tkI, tkR) @ i
+    & not (Ex #r. RevealLtk(I) @ r)
+    & not (Ex #r. RevealLtk(R) @ r)
+   ==> (Ex #j. I_Begin(I, R, pkI, pkR) @ j & j < i)"
+
+/* P6a -- key-compromise impersonation, commitment level.
+   The responder's OWN long-term key is compromised; the initiator's is not.
+   Can the attacker make the responder commit key material for a session it
+   attributes to the honest initiator?
+
+   ProVerif does not terminate on this query within the documented budget
+   (see expectations.yaml, P6a), which is the clearest single instance of the
+   division of labour argued in docs/tool-comparison.md. */
+lemma kci_responder_commit:
+  "All I R pkI pkR tkI tkR #i.
+      R_Done(I, R, pkI, pkR, tkI, tkR) @ i
+    & not (Ex #r. RevealLtk(I) @ r)
+   ==> (Ex #j. I_Begin(I, R, pkI, pkR) @ j & j < i)"
+
+/* P6b -- key-compromise impersonation, completion level.
+   The same compromise, but the question is now whether the responder ever
+   accepts traffic on such a session.
+
+   Forging message 1 needs es = DH(ei, Sr) and ss = DH(Si, Sr), both
+   computable from the leaked responder scalar.  Deriving the transport keys
+   additionally needs se = DH(Si, er), which requires the initiator's scalar.
+   P6a and P6b are therefore expected to differ, and the difference is where
+   WireGuard's KCI resistance actually resides. */
+lemma kci_responder_complete:
+  "All I R tkI tkR #i.
+      R_Complete(I, R, tkI, tkR) @ i
+    & not (Ex #r. RevealLtk(I) @ r)
+   ==> (Ex pkI pkR #j. I_Begin(I, R, pkI, pkR) @ j & j < i)"
+
+end

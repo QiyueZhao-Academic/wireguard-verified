@@ -1,0 +1,135 @@
+\section{Verification Results}
+\label{sec:results}
+
+Table~\ref{tab:results} is the complete result matrix, rendered from
+\texttt{results/results.json}. Every cell is populated: proved, refuted,
+inconclusive, or non-terminating with a recorded cause and the budget it
+consumed. Of \wgProps{} properties, \wgProved{} are proved, \wgAttacks{} are
+refuted, \wgInconcl{} is inconclusive and \wgNonterm{} did not terminate.
+
+\begin{table*}[t]
+\centering
+\caption{Verification outcomes, the complete matrix. \wgProVerif{} and
+\wgTamarin, single core, \wgMemCap\,GB address-space cap, \wgBudget\,s
+wall-clock budget. \(\dagger\) marks a budget consumed without reaching a
+verdict, which is not a time-to-verdict and must not be read as one; \emph{n/r}
+marks a run that predates per-query cost recording. Every cell is rendered
+from \texttt{results/results.json}.}
+\label{tab:results}
+\footnotesize
+\input{generated/results_table}
+\end{table*}
+
+\subsection{Baseline secrecy and authentication}
+
+\para{Secrecy.} Session-key secrecy (P1) and forward secrecy (P3) are proved
+with an unbounded number of concurrent sessions. Forward secrecy is stated by
+releasing both static scalars in phase~1, strictly after every phase-0
+session; the ephemeral-ephemeral term \(ee\) is what survives.
+
+\para{Authentication, level by level.} Non-injective agreement of the
+responder with the initiator (P5b) is proved, and so is injective agreement
+(P5c). Injectivity is simultaneously the replay-resistance statement: a
+replayed initiation would produce two responder completions against a single
+initiator run, which is exactly what the injective query forbids, and the
+TAI64N timestamp is what prevents it.
+
+\para{The direction that resists.} Agreement in the opposite direction (P5a)
+did not terminate. Three formulations were attempted---agreement on both
+static values and both transport keys, an existentially weakened aliveness
+statement, and the same with \texttt{redundantHypElim} enabled---and each
+exhausted the budget. The direction that resists is the one whose proof must
+reason through the authenticated decryption of message~2 under a psk-derived
+key, the deepest point in the key schedule.
+
+\subsection{What the pre-shared key actually contributes}
+
+\begin{table}[t]
+\centering
+\caption{The post-quantum control experiment: two models, one variable. Both
+arms face the same attacker, which gains a discrete-logarithm oracle in
+phase~1. The verdict column is read from the same result file as
+Table~\ref{tab:results}, so the experiment cannot be reported as having
+succeeded in a run where it did not.}
+\label{tab:psk}
+\footnotesize
+\input{generated/tbl_psk}
+\end{table}
+
+The claim that \texttt{IKpsk2}'s pre-shared key provides post-quantum
+protection is common and rarely tested. Table~\ref{tab:psk} tests it. Both
+models are the same file up to one line: whether the pre-shared key is
+published. Both face an attacker that, in phase~1, can invert every
+Curve25519 public value it recorded---which is every ephemeral, since they
+travel in clear, and both statics.
+
+\para{With the key public.} Every input to the key schedule is recoverable and
+ProVerif returns a derivation reconstructing both transport keys; the
+derivation is archived under \texttt{results/traces/}.
+
+\para{With the key secret.} The same attacker is defeated:
+\(\mathrm{KDF}_3\) mixes an independent secret into the chaining key, and no
+amount of discrete-logarithm capability recovers it. Because the two models
+differ in exactly one variable, the difference in outcome is attributable to
+that variable and to nothing else. This is the sense in which the pre-shared
+key is doing post-quantum work, and the control is what makes the statement
+more than an assertion.
+
+\subsection{Where KCI resistance resides}
+
+\begin{figure}[t]
+\centering
+\resizebox{\columnwidth}{!}{\input{generated/fig_kci_gap}}
+\caption{With the responder's static key compromised, two adjacent
+authentication levels separate. The static-ephemeral term \(se\) is the whole
+of the difference, and the property lives in the gap between them.}
+\label{fig:kci}
+\end{figure}
+
+Key-compromise impersonation asks whether compromising a party's own long-term
+key lets an attacker impersonate \emph{others} to it. We asked it at two
+levels, and the levels separate (Figure~\ref{fig:kci}).
+
+\para{The responder does commit.} Producing a well-formed message~1 in the
+name of an honest initiator requires \(es=\mathrm{DH}(e_i,S_r)\) and
+\(ss=\mathrm{DH}(s_i,S_r)\). Both are computable from the leaked responder
+scalar, so an attacker can drive the responder to commit transport keys for a
+session it attributes to that initiator. Tamarin refutes the
+commitment-level lemma (S6a) and returns the trace.
+
+\para{The responder never completes.} Deriving those transport keys
+additionally requires \(se=\mathrm{DH}(e_r,S_i)\), and that needs either the
+responder's ephemeral scalar or the initiator's static scalar. The attacker
+has neither. Tamarin verifies the completion-level lemma (S6b): the responder
+never accepts a transport record on such a session.
+
+\para{Why the distinction is operational.} WireGuard's KCI resistance depends
+on treating a session as established only once authenticated traffic has
+arrived, not once the handshake response has been sent. A model with a single
+``session established'' event would report one verdict where there are two,
+and would locate the property in the wrong place.
+
+\subsection{KEM-derived pre-shared keys}
+
+If the pre-shared key is to come from a KEM rather than from manual
+configuration---the construction Rosenpass~\cite{rosenpass2023} uses---the
+question is what that KEM must bind. We modelled two: one whose shared secret
+depends on the encapsulation key, and one whose shared secret depends only on
+the encapsulation randomness, together with the re-encapsulation capability
+that absence of binding confers.
+
+\para{Binding is the whole of it.} With binding, secrecy of the established
+pre-shared key is proved (P12a). Without it, the attacker redirects an
+observed ciphertext to an encapsulation key of its own and recovers the
+pre-shared key outright (P12b). The failure is not a weakness in any
+primitive: confidentiality and integrity of the KEM are untouched, and only
+the binding is missing. In the vocabulary of Cremers, Dax and
+Medinger~\cite{cremers2024kembinding} the separating property is
+MAL-BIND-K-PK, which ML-KEM satisfies.
+
+\para{One query we could not settle.} A third query, asking whether the
+responder's view of the established key is sound, returned inconclusive
+(P12c): a bare encapsulation authenticates nobody, and the honest statement is
+disjunctive in a way ProVerif's approximation could not decide. We report it
+as inconclusive rather than restate it until it passed. An undecided query is
+a result; a restated one is not.

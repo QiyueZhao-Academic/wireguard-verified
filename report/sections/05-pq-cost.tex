@@ -1,0 +1,102 @@
+\section{The Cost of Post-Quantum Migration}
+\label{sec:pq}
+
+The analysis in this section requires no computation and no measurement. Every
+figure follows arithmetically from the wire-format layout of
+Section~\ref{sec:modelling} and the published parameter sizes of
+ML-KEM~\cite{fips203}. That makes it the most robust part of the paper: it
+does not depend on the machine it was produced on, and it cannot be disturbed
+by a prover's resource limits.
+
+\subsection{Packet growth}
+
+\begin{table}[t]
+\centering
+\caption{In-band KEM substitution, sizes in bytes. The substitution modelled
+is the cheapest one possible, so these are a lower bound on any in-band
+design.}
+\label{tab:pqsizes}
+\footnotesize
+\input{generated/pq_sizes}
+\end{table}
+
+We model the cheapest possible in-band substitution: the initiator's 32-byte
+ephemeral public value becomes an encapsulation key, the responder's becomes
+the corresponding ciphertext, and every other field keeps its length. Because
+this is the minimal construction, the resulting sizes
+(Table~\ref{tab:pqsizes}) are a \emph{lower bound} on any in-band design,
+which is what makes the conclusion below robust rather than contingent on a
+particular protocol sketch. An initiation grows by a factor of \wgKemGrowth{}
+at ML-KEM-768 and \wgKemTenGrowth{} at ML-KEM-1024.
+
+\subsection{Path reachability}
+
+\begin{figure}[t]
+\centering
+\resizebox{\columnwidth}{!}{\input{generated/fig_pq_mtu}}
+\caption{Initiation size against the usable UDP payload of each path. The
+ML-KEM-768 bar crosses the IPv6 minimum-MTU rule; that crossing is the whole
+of the argument in this section.}
+\label{fig:mtu}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{ML-KEM-768 initiation against \wgPaths{} representative path MTUs.
+Only the first row is a guarantee; the others are common cases.}
+\label{tab:pqmtu}
+\footnotesize
+\input{generated/pq_mtu}
+\end{table}
+
+RFC~8200~\cite{rfc8200} requires every IPv6 link to carry a
+\wgIpvsixMtu-byte datagram. After an IPv6 header of 40\,B and a UDP header of
+8\,B, the usable payload is \wgIpvsixPayload\,B. An in-band ML-KEM-768
+initiation is \wgKemInit\,B. It exceeds that payload by \wgOvershoot\,B, and a
+datagram that does not fit the IPv6 minimum MTU has no guaranteed path
+(Figure~\ref{fig:mtu}, Table~\ref{tab:pqmtu}). Path MTU discovery for datagram
+transports~\cite{rfc8899} can find a larger path when one exists, but it
+cannot manufacture one where it does not.
+
+\para{The chain, stated plainly.} Each link below is individually
+unremarkable, and the conclusion is not:
+
+\begin{quote}
+KEM parameter sizes \(\rightarrow\) datagram size \(\rightarrow\) path MTU
+\(\rightarrow\) fragmentation or PMTUD failure \(\rightarrow\) the handshake
+is unreachable on some paths \(\rightarrow\) the architecture must change.
+\end{quote}
+
+This is why post-quantum designs for WireGuard either restructure the
+handshake around KEMs from the start~\cite{hulsing2021pqwireguard} or perform
+the key agreement over a separate channel and inject the result into the
+pre-shared key slot. Rosenpass~\cite{rosenpass2023} takes the second route,
+and the analysis above supplies the reason it is necessary rather than merely
+convenient.
+
+\para{What migration costs beyond bytes.} There is a real tension worth
+naming. WireGuard's single-packet, stateless handshake is itself an
+engineering asset: it needs no fragment reassembly, holds no state before
+authentication, and is what makes the cookie mechanism possible. Post-quantum
+migration threatens precisely that asset. ML-KEM-512 would fit every path
+considered at \wgKemFiveInit\,B, but at a security level most deployments will
+not choose; ML-KEM-1024, at \wgKemTenInit\,B, fits none of them.
+
+\subsection{Three dimensions, one conclusion}
+
+Combining this section with Section~\ref{sec:results}:
+
+\begin{itemize}\itemsep2pt
+\item \emph{Packet size.} An in-band initiation grows by a factor of
+      \wgKemGrowth{} at ML-KEM-768 and \wgKemTenGrowth{} at ML-KEM-1024.
+\item \emph{Path reachability.} Above ML-KEM-512, in-band substitution loses
+      the guarantee of a usable path.
+\item \emph{Assumption strength.} A KEM-derived pre-shared key preserves the
+      properties of a configured one only if the KEM binds its shared secret
+      to the encapsulation key; without that binding the pre-shared key is
+      recoverable while every primitive remains unbroken (P12a/P12b).
+\end{itemize}
+
+The cost of post-quantum migration is not merely computational. It appears
+along all three dimensions at once, and a design that addresses only one of
+them has not addressed the problem.

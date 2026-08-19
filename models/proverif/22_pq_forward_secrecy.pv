@@ -1,0 +1,28 @@
+(* P4 -- post-quantum forward secrecy, psk configured.
+   Phase 1 models an attacker that has acquired quantum capability: it gains a
+   discrete-logarithm oracle and can therefore invert every Curve25519 public
+   value it recorded in phase 0, static and ephemeral alike.  This is the
+   standard formalisation of harvest-now-decrypt-later.
+
+   Every DH term in the handshake collapses under this attacker.  What remains
+   is the pre-shared key, mixed in by KDF_3 during message 2.  If the property
+   holds here, the psk is doing exactly the job WireGuard documents for it. *)
+
+(* Private: the oracle must not exist in phase 0.  It is exposed only by the
+   phase-1 process below. *)
+reduc forall x: exponent; dlog(pk(x)) = x [private].
+
+query attacker(witnessI);
+      attacker(witnessR).
+
+process
+  new siA: exponent; let SA = pk(siA) in
+  new srB: exponent; let SB = pk(srB) in
+  new psk: key;
+  out(net, (SA, SB));
+  ( (!Initiator(siA, SA, SB, psk))
+  | (!Responder(srB, SB, psk))
+    (* Quantum capability: any public value the attacker holds can be
+       inverted.  Ephemerals travel in clear, so all of them are covered. *)
+  | (phase 1; !(in(net, (X: G)); out(net, dlog(X))))
+  )

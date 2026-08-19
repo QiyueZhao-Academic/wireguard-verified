@@ -1,0 +1,125 @@
+(* ------------------------------------------------------------------------- *)
+(* primitives.pvl                                                            *)
+(*                                                                           *)
+(* Symbolic model of the cryptographic primitives used by WireGuard's        *)
+(* Noise_IKpsk2 handshake:                                                   *)
+(*                                                                           *)
+(*   Curve25519       -> DH over a prime-order group                         *)
+(*   ChaCha20Poly1305 -> AEAD with associated data                           *)
+(*   BLAKE2s          -> collision-resistant hash and keyed MAC              *)
+(*   HKDF(BLAKE2s)    -> key-derivation chain, 1/2/3-output variants         *)
+(*                                                                           *)
+(* Each symbol is a perfect primitive in the Dolev-Yao sense: the attacker    *)
+(* learns nothing about a term except through the destructors declared here.  *)
+(* Section III of the report states which real-world assumptions this         *)
+(* idealisation encodes; docs/limitations.md states what it excludes.        *)
+(* ------------------------------------------------------------------------- *)
+
+(* --- Types ---------------------------------------------------------------- *)
+
+type G.         (* Curve25519 public value, 32 bytes on the wire             *)
+type exponent.  (* Curve25519 scalar, 32 bytes, never transmitted            *)
+type key.       (* 32-byte symmetric secret: chaining key, AEAD key, or psk  *)
+type nonce.     (* 96-bit AEAD nonce; the handshake always uses counter 0    *)
+
+(* --- Diffie-Hellman -------------------------------------------------------
+   The group is modelled with two symbols rather than with an iterated
+   exponentiation exp(G, exponent): G --
+
+     pk(x)     the public value g^x
+     dh(P, y)  the shared secret from peer public value P and own scalar y
+
+   The single equation gives exactly the commuting property X25519 provides.
+   Two consequences matter.
+
+   (a) pk is the only constructor of type G, so every group element the
+       attacker can supply is g^t for a term t it can build.  In a
+       prime-order group this is faithful: every X25519 output is g^t for
+       some t.
+
+   (b) dh returns a key, not a G, so a DH result cannot be fed back in as a
+       group element.  Term depth is therefore bounded by construction.
+       With the alternative exp(G, exponent): G formulation the attacker can
+       build arbitrarily deep towers that the single commuting equation does
+       not normalise, and Horn-clause saturation diverges.  This was observed
+       directly during model development; see docs/model-notes.md.
+
+   Excluded by this abstraction: small-subgroup and invalid-curve behaviour,
+   and the all-zero DH output check.  See docs/limitations.md.               *)
+
+fun pk(exponent): G.
+fun dh(G, exponent): key.
+equation forall x: exponent, y: exponent;
+  dh(pk(x), y) = dh(pk(y), x).
+
+(* --- Encodings -------------------------------------------------------------
+   [data] marks an injective, publicly invertible encoding -- exactly the
+   relationship between a value and its byte representation on the wire.
+   g2b must be [data] because the responder recovers the initiator's static
+   public key by pattern-matching the decrypted encrypted_static field.      *)
+
+fun g2b(G): bitstring [data].     (* 32-byte encoding of a public value      *)
+fun k2b(key): bitstring [data].   (* 32-byte encoding of key material        *)
+
+(* --- Hash and MAC (BLAKE2s) ----------------------------------------------- *)
+
+fun hash(bitstring): bitstring.
+
+(* Keyed BLAKE2s, used for mac1 and mac2.  For mac1 the key is the PUBLIC
+   value HASH(LABEL_MAC1 || Sr), so mac1 proves knowledge of the responder's
+   static public key and nothing more.  Keeping it explicit is what lets the
+   report argue the DoS property precisely instead of asserting it.          *)
+fun mac(bitstring, bitstring): bitstring.
+
+fun concat(bitstring, bitstring): bitstring [data].
+
+(* --- Transcript hash -------------------------------------------------------
+   Noise maintains a running transcript hash h, updated as h <- HASH(h || f)
+   after each field f.  The protocol requires only that h bind the transcript
+   prefix injectively; h is never transmitted and serves solely as AEAD
+   associated data.
+
+   We therefore model h after step i as a distinct collision-resistant
+   function hT_i of the entire prefix, rather than as an i-fold nesting of
+   HASH and concatenation.  Both formulations bind the same data; the flat
+   one keeps term depth constant.  docs/wire-to-model.md records the
+   abstraction and what it may conceal.                                      *)
+
+fun hT1(G, G): bitstring.                                (* Sr, Ei                *)
+fun hT2(G, G, bitstring): bitstring.                     (* + encrypted_static    *)
+fun hT3(G, G, bitstring, bitstring): bitstring.          (* + encrypted_timestamp *)
+fun hT4(G, G, bitstring, bitstring, G): bitstring.       (* + responder ephemeral *)
+fun hT5(G, G, bitstring, bitstring, G, key): bitstring.  (* + psk-derived tau     *)
+
+(* --- HKDF chain ------------------------------------------------------------
+   WireGuard's KDF_n(key, input) expands to n independent 32-byte outputs.
+   Each output position is a separate one-way function of the pair, the
+   standard symbolic abstraction of HKDF-Expand with distinct info bytes.    *)
+
+fun kdf1(key, bitstring): key.
+fun kdf2a(key, bitstring): key.   (* KDF_2 output 1 *)
+fun kdf2b(key, bitstring): key.   (* KDF_2 output 2 *)
+fun kdf3a(key, bitstring): key.   (* KDF_3 output 1 *)
+fun kdf3b(key, bitstring): key.   (* KDF_3 output 2 *)
+fun kdf3c(key, bitstring): key.   (* KDF_3 output 3 *)
+
+(* --- AEAD (ChaCha20-Poly1305) ----------------------------------------------
+   The destructor succeeds only when key, nonce and associated data all
+   match, which models confidentiality and integrity together and makes the
+   transcript hash genuinely binding.                                        *)
+
+fun aead(key, nonce, bitstring, bitstring): bitstring.
+reduc forall k: key, n: nonce, m: bitstring, ad: bitstring;
+  aead_dec(k, n, aead(k, n, m, ad), ad) = m.
+
+const zero_nonce: nonce [data].
+
+(* --- Public constants ------------------------------------------------------
+   HASH(CONSTRUCTION) is a fixed public value; modelling it as a constant
+   costs no precision.                                                       *)
+
+const LABEL_MAC1:   bitstring [data].  (* "mac1----"                         *)
+const LABEL_COOKIE: bitstring [data].  (* "cookie--"                         *)
+const EMPTY:        bitstring [data].  (* zero-length payload of message 2   *)
+const CK0: key [data].                 (* Ci = HASH(CONSTRUCTION)            *)
+const KEMPTY: bitstring [data].        (* empty HKDF input, transport keys   *)

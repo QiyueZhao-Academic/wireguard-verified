@@ -1,0 +1,190 @@
+\section{How the Models Are Built and Kept Honest}
+\label{sec:modelling}
+
+Table~\ref{tab:scope} states what the artifact contains. The figures in it are
+counted from the files themselves at build time, so the description cannot
+drift away from the thing it describes.
+
+\begin{table}[t]
+\centering
+\caption{Verification scope, measured from the repository rather than
+described. ``Properties'' counts rows of the result matrix
+(Table~\ref{tab:results}), not queries: a model file may carry several.}
+\label{tab:scope}
+\footnotesize
+\input{generated/tbl_scope}
+\end{table}
+
+\subsection{One transcription, two provers}
+
+The project's central methodological commitment is that any difference between
+the two provers' outcomes should be attributable to the provers, not to the
+modelling. The handshake is therefore written once, in
+\texttt{lib/wireguard\_core.pvl}, and every ProVerif query file includes that
+library rather than restating the protocol. The Tamarin model is transcribed
+term for term against it, and Section~\ref{sec:discussion} records the two
+places where the transcriptions could not be made identical, together with the
+reason in each case.
+
+\subsection{Primitives, and one abstraction that decided the project}
+
+\para{Diffie-Hellman with two symbols.} Diffie-Hellman is modelled with two
+symbols rather than an iterated exponentiation:
+\[
+  \mathit{pk}(x), \qquad
+  \mathit{dh}(P,y), \qquad
+  \mathit{dh}(\mathit{pk}(x),y)=\mathit{dh}(\mathit{pk}(y),x).
+\]
+Two consequences matter. Because \(\mathit{pk}\) is the only constructor of
+the group type, every group element the attacker can supply is \(g^t\) for
+some term \(t\) it can build---faithful for a prime-order group, where every
+X25519 output is of that form. Because \(\mathit{dh}\) returns key material
+rather than a group element, a Diffie-Hellman result cannot re-enter as a
+group element, so term depth is bounded by construction.
+
+\para{Why the obvious formulation fails.} This was not a stylistic choice. The
+natural formulation \(\mathit{exp}(G,\mathit{exponent}):G\) lets the attacker
+build towers \(\mathit{exp}(\mathit{exp}(\mathit{exp}(g,a),b),c)\) that the
+single commuting equation does not normalise. With that formulation,
+saturation on the secrecy query exhausted the memory budget after roughly
+\(1.2\times10^4\) clauses and never terminated; with the two-symbol
+formulation the same query is proved well inside the budget
+(Table~\ref{tab:results}). The episode is recorded because it decides whether
+a symbolic model is usable at all, and it is rarely written down.
+
+\para{A flat transcript hash.} Noise updates \(h \leftarrow
+\mathrm{HASH}(h \mathbin\| f)\) after each field. Since \(h\) is never
+transmitted and serves only as AEAD associated data, its sole requirement is
+that it bind the transcript prefix injectively, so we model \(h\) after step
+\(i\) as a distinct collision-resistant function of the entire prefix. Both
+formulations bind the same data; the flat one keeps term depth constant. AEAD,
+the HKDF chain and the keyed MAC are standard perfect primitives, with one
+function symbol per HKDF output position.
+
+\subsection{The attacker, and when it gains each capability}
+
+\begin{figure}[t]
+\centering
+\resizebox{\columnwidth}{!}{\input{generated/fig_compromise}}
+\caption{Compromise is staged, never built in. Phase~0 is the classical
+Dolev-Yao attacker; phase~1 releases the static scalars and a
+discrete-logarithm oracle, strictly after every phase-0 session. The
+key-compromise queries sit outside this staging, because there the compromise
+is part of the scenario rather than a sequel to it.}
+\label{fig:compromise}
+\end{figure}
+
+The attacker is Dolev-Yao. Compromise is never a built-in capability: each
+class of secret is revealed by an explicit action, so every query states which
+compromises it tolerates, and a proof cannot silently depend on an assumption
+nobody wrote down.
+
+\para{Staging a quantum transition.} Post-quantum capability is expressed with
+ProVerif's phase mechanism (Figure~\ref{fig:compromise}). Phase~0 is the
+classical attacker. In phase~1 the attacker gains a discrete-logarithm oracle,
+private in phase~0 and exposed only by a phase-1 process. Since every
+ephemeral public value travels in clear, an attacker that recorded phase-0
+traffic can invert all of it once phase~1 begins. This is the standard
+formalisation of harvest-now-decrypt-later, and it is what makes post-quantum
+forward secrecy a property rather than a slogan.
+
+\para{Compromise as part of the scenario.} Key-compromise impersonation needs
+the opposite arrangement: the responder's static key is in the attacker's
+hands \emph{while} the session runs, not afterwards. That is an ordering
+constraint over individual events rather than a global staging, which is why
+those queries are posed to Tamarin with action facts and why the two provers
+do not divide this work symmetrically.
+
+\subsection{From wire format to model terms}
+
+A formal model earns its authority from the fidelity of its correspondence to
+the artifact it claims to describe. We therefore maintain a field-by-field
+mapping from the wire format to terms in the models, and make it
+machine-checkable rather than a promise.
+
+\para{Offsets are derived, never written.} \texttt{tools/wire.py} is the
+single source of truth for the layout. Offsets are accumulated from the field
+lengths, so a corrected length cannot leave a stale offset behind it, and the
+computed totals are checked against the specification figures of
+\wgInitBytes, \wgRespBytes, 64 and 16\,B. Tables~\ref{tab:wireinit}
+and~\ref{tab:wireresp} are rendered from that same structure, which is also
+what \texttt{scripts/verify\_wire\_table.py} cross-checks the models against.
+Of \wgFields{} fields across the four message types, \wgFieldsModelled{} carry
+a model term and \wgFieldsUnmodelled{} deliberately do not.
+
+\begin{table}[t]
+\centering
+\caption{Handshake initiation, \wgInitBytes\,B. Offsets are derived from
+lengths; ``model term'' names the corresponding term in the shared ProVerif
+core, and a dash marks a field deliberately outside the models.}
+\label{tab:wireinit}
+\footnotesize
+\input{generated/tbl_wire_init}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Handshake response, \wgRespBytes\,B. Note that \texttt{mac1} here is
+keyed by the \emph{initiator's} static public value, which is what makes
+identity hiding conditional.}
+\label{tab:wireresp}
+\footnotesize
+\input{generated/tbl_wire_resp}
+\end{table}
+
+\para{What is not modelled, and why.} Four field classes are deliberately
+absent, and stating the reason for each is part of the correspondence rather
+than an apology for it. \emph{Message type and reserved bytes} serve
+demultiplexing; the models use distinct channels instead. \emph{Session
+indices} are chosen freely by the sender and carry no security burden, but
+they are also what makes endpoint roaming possible---a WireGuard engineering
+advantage with no counterpart in an abstract Noise model. \emph{\texttt{mac2}
+and the cookie mechanism} are load-shedding devices, and the Dolev-Yao
+attacker has no notion of computational cost, so a symbolic model cannot
+express the property they provide. \emph{The data-plane counter and its
+anti-replay window} lie outside the handshake entirely.
+
+\para{An argued property, not a verified one.} The cookie mechanism deserves
+the distinction made explicitly. \texttt{mac1} is keyed by
+\(\mathrm{HASH}(\mathtt{LABEL\_MAC1} \mathbin\| S_r)\), so an attacker
+ignorant of the responder's static public value cannot produce a message that
+survives the first check, and cannot force a Diffie-Hellman operation. That is
+a genuine property, and it is genuinely outside the model. We argue it here
+rather than claim the models establish it.
+
+\para{Conditional identity hiding.} One field deserves separate mention. As
+Table~\ref{tab:wireresp} records, the \texttt{mac1} of the \emph{response} is
+keyed by the \emph{initiator's} static public value. An observer holding a
+candidate public key can therefore test whether a given response is addressed
+to its holder. WireGuard's identity hiding is accordingly conditional: it
+protects the initiator's identity from an observer who does not already hold
+the candidate keys, and not from one who does. The distinction is visible only
+because \texttt{mac1} was modelled explicitly rather than abstracted away.
+
+\subsection{Budgets, expectations, and generated numbers}
+
+\para{Every run is bounded.} Every invocation carries an explicit
+address-space cap and wall-clock timeout---\wgMemCap\,GB and \wgBudget\,s on a
+single core, a budget chosen to match what remains available on an 8\,GB
+laptop with an editor open. The cap matters more than its value: without one,
+a runaway query consumes the machine and produces a run that is slow,
+irreproducible and hostile to anything else running. With one, a query either
+finishes within budget or fails deterministically, which is a reportable
+outcome.
+
+\para{Verification as a regression suite.}
+\texttt{expectations.yaml} declares the expected verdict for each of
+\wgExpectations{} queries, and \texttt{make verify} fails on any mismatch.
+Outcomes that are attacks are expectations too: the control model of
+Section~\ref{sec:results} is \emph{supposed} to be refuted, and a run in which
+it succeeded would indicate that the model had drifted, not that the protocol
+had improved.
+
+\para{No number in this paper is typed.} Result tables, figures and every
+quantity this text quotes are rendered from \texttt{results/results.json},
+\texttt{tools/wire.py} and \texttt{tools/pqcost.py} when the document is
+built. An earlier revision of this report was internally consistent and
+externally wrong---the tables were generated and correct while the prose
+quoted timings from a run nobody could identify. Generating the tables was not
+enough, because prose is not data; the numbers in the sentences are now macros
+too.

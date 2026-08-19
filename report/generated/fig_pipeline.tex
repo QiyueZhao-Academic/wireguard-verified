@@ -1,0 +1,43 @@
+\begin{tikzpicture}[x=1cm,y=1cm,font=\footnotesize,
+    bx/.style={draw=black!55,rounded corners=2pt,align=center,inner sep=4pt,
+               text width=3.2cm,minimum height=1.0cm},
+    hi/.style={bx,draw=okgreen,very thick},
+    lnk/.style={->,thick,black!45}]
+
+  \node[bx] (spec) at (1.7,0)
+    {\textbf{WireGuard specification}\\{\scriptsize wire format $+$ Noise \texttt{IKpsk2}}};
+  \node[hi] (core) at (5.6,0)
+    {\textbf{one shared core}\\{\scriptsize \texttt{wireguard\_core.pvl}}};
+  \node[bx] (pv) at (9.5,1.05)
+    {\textbf{ProVerif models}\\{\scriptsize one file per property}};
+  \node[bx] (tam) at (9.5,-1.05)
+    {\textbf{Tamarin theory}\\{\scriptsize transcribed term for term}};
+  \node[bx] (run) at (13.4,0)
+    {\textbf{\texttt{runner.py}}\\{\scriptsize wall-clock $+$ memory budget}};
+  \node[bx] (raw) at (17.3,0)
+    {\textbf{\texttt{results/raw/}}\\{\scriptsize verbatim prover output}};
+
+  \node[hi] (json) at (17.3,-3.1)
+    {\textbf{\texttt{results.json}}\\{\scriptsize machine-readable verdicts}};
+  \node[bx] (exp) at (13.4,-3.1)
+    {\textbf{\texttt{expectations.yaml}}\\{\scriptsize regression gate}};
+  \node[bx] (gen) at (9.5,-3.1)
+    {\textbf{\texttt{render\_tables.py}}\\{\scriptsize tables, figures, \texttt{facts.tex}}};
+  \node[bx] (tex) at (5.6,-3.1)
+    {\textbf{\texttt{report/main.tex}}\\{\scriptsize prose only; no typed numbers}};
+  \node[hi] (pdf) at (1.7,-3.1)
+    {\textbf{\texttt{docs/report.pdf}}\\{\scriptsize built by \texttt{make report}}};
+
+  \draw[lnk] (spec) -- (core);
+  \draw[lnk] (core.east) -- (pv.west);
+  \draw[lnk] (core.east) -- (tam.west);
+  \draw[lnk] (pv.east) -- (run.west);
+  \draw[lnk] (tam.east) -- (run.west);
+  \draw[lnk] (run) -- (raw);
+  \draw[lnk] (raw) -- node[left,black!55,font=\scriptsize,align=right]
+    {\texttt{collect\_}\\\texttt{results.py}} (json);
+  \draw[lnk] (json) -- (exp);
+  \draw[lnk] (exp) -- (gen);
+  \draw[lnk] (gen) -- (tex);
+  \draw[lnk] (tex) -- (pdf);
+\end{tikzpicture}

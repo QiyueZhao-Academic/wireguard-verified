@@ -1,0 +1,25 @@
+\begin{tabular}{@{}lllrl@{}}
+\toprule
+ID & Property & Prover & Cost & Outcome \\
+\midrule
+P1 & Session-key secrecy & ProVerif & \textit{n/r} & \ok \\
+P3 & Forward secrecy & ProVerif & \textit{n/r} & \ok \\
+P4 & Post-quantum forward secrecy (psk) & ProVerif & \textit{n/r} & \ok \\
+P4c & \quad same, psk absent (control) & ProVerif & \textit{n/r} & \attack \\
+P5a & Agreement, responder to initiator & ProVerif & \textit{n/r} & \nonterm \\
+P5b & Agreement, initiator to responder & ProVerif & \textit{n/r} & \ok \\
+P5c & Injective agreement / replay (P9) & ProVerif & \textit{n/r} & \ok \\
+P6a & KCI, commitment level & ProVerif & \textit{n/r} & \nonterm \\
+P6b & KCI, completion level & ProVerif & \textit{n/r} & \nonterm \\
+P12a & KEM-derived psk secrecy, K-PK binding & ProVerif & \textit{n/r} & \ok \\
+P12b & \quad same, binding absent (control) & ProVerif & \textit{n/r} & \attack \\
+P12c & KEM-derived psk, responder-view soundness & ProVerif & \textit{n/r} & \inconcl \\
+\midrule
+S0 & Model admits an honest run & Tamarin & \textit{n/r} & \ok \\
+S1 & Session-key secrecy & Tamarin & \textit{n/r} & \ok \\
+S3 & Forward secrecy & Tamarin & \textit{n/r} & \ok \\
+S5 & Agreement, no compromise & Tamarin & \textit{n/r} & \ok \\
+S6a & KCI, commitment level & Tamarin & \textit{n/r} & \attack \\
+S6b & KCI, completion level & Tamarin & \textit{n/r} & \ok \\
+\bottomrule
+\end{tabular}

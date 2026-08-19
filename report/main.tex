@@ -1,0 +1,149 @@
+%% ---------------------------------------------------------------------------
+%% WireGuard-Verified -- technical report.
+%%
+%% Formatted after the IEEE Symposium on Security and Privacy (Oakland) house
+%% style: US Letter, two columns, 10pt Times, IEEEtran conference class, and
+%% arabic section numbering with left-aligned bold headings.
+%%
+%% Build:  make report            (or: latexmk -pdf main.tex, with TEXINPUTS
+%%                                 pointing at ./vendor)
+%%
+%% The class itself is vendored under vendor/ -- see vendor/README.md for why.
+%%
+%% NOTHING NUMERIC IS TYPED IN THIS DOCUMENT.  Every table and figure under
+%% generated/ is produced by scripts/render_tables.py and tools/figures.py, and
+%% every quantity the prose states is a macro defined in generated/facts.tex,
+%% which those scripts derive from results/results.json, tools/wire.py,
+%% tools/pqcost.py, expectations.yaml and the Makefile.  If a number here has
+%% no macro behind it, that is a bug: see scripts/render_tables.py.
+%% ---------------------------------------------------------------------------
+\documentclass[conference,letterpaper,10pt]{IEEEtran}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cite}
+
+%% --- IEEE S&P sectioning ---------------------------------------------------
+%% IEEEtran numbers sections with centred roman numerals.  S&P uses arabic
+%% numbers with a trailing period and left-aligned bold headings, so both the
+%% counters and the heading format are redefined here.  Subsubsections are
+%% run-in, which is also the S&P look and which keeps the document from
+%% acquiring a fourth level of hierarchy it does not need.
+%%
+%% Two families of macro have to change, which is easy to get half-right:
+%% \thesection is what \ref and the table of contents show, while
+%% \thesectiondis is what IEEEtran prints in the heading itself.  Redefining
+%% only the first gives arabic cross-references above roman headings.
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+\makeatletter
+\def\thesectiondis{\thesection.}
+\def\thesubsectiondis{\thesubsection.}
+\def\thesubsubsectiondis{\thesubsubsection.}
+
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {2.4ex \@plus 1ex \@minus .2ex}{1.2ex \@plus .2ex}%
+  {\normalfont\large\bfseries}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+  {2.0ex \@plus 1ex \@minus .2ex}{0.8ex \@plus .2ex}%
+  {\normalfont\normalsize\bfseries}}
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+  {1.4ex \@plus 1ex \@minus .2ex}{-0.6em}%
+  {\normalfont\normalsize\bfseries}}
+\makeatother
+
+%% --- Local conventions -----------------------------------------------------
+\definecolor{okgreen}{HTML}{2F6F4E}
+\definecolor{badred}{HTML}{A33A2A}
+
+%% Outcome markers used by the generated results table.  Defined here so the
+%% generator emits semantic commands rather than presentation.
+\newcommand{\ok}{\textcolor{okgreen}{\textbf{proved}}}
+\newcommand{\attack}{\textcolor{badred}{\textbf{attack found}}}
+\newcommand{\inconcl}{\textcolor{black!60}{inconclusive}}
+\newcommand{\nonterm}{\textcolor{black!60}{non-terminating}}
+
+%% Bold run-in lead for a paragraph.  The report uses these in place of a
+%% third and fourth level of section numbering: a reader scanning a column
+%% should be able to see what each paragraph is for without a heading for
+%% every one of them.
+\newcommand{\para}[1]{\par\smallskip\noindent\textbf{#1}\space}
+
+%% Every quantity the prose quotes.  Generated; see the header comment above.
+\input{generated/facts}
+
+\begin{document}
+
+\title{Symbolic Verification of the WireGuard Handshake\\
+and Its Post-Quantum Migration Cost}
+
+\author{\IEEEauthorblockN{Qiyue Zhao}}
+
+\maketitle
+
+\begin{abstract}
+We present a verification artifact for the WireGuard handshake in which a
+single protocol transcription drives two symbolic provers and every number
+printed in this paper is generated from what those provers wrote. The design
+buys two things at once: any difference between the verdicts is attributable
+to the prover rather than to the modelling, and no claim in the text can
+outlive the run that produced it.
+
+Four results follow. \emph{Firstly}, a controlled pair of models isolates what
+the pre-shared key of \texttt{IKpsk2} contributes: against an attacker granted
+a discrete-logarithm oracle after the session closes, transport-key secrecy is
+proved when the pre-shared key is secret and refuted when it is published,
+with the models otherwise identical. \emph{Secondly}, key-compromise
+impersonation resistance is located rather than asserted---with the
+responder's static key leaked the responder does commit transport keys to a
+session it attributes to an honest peer, and never accepts traffic on it; the
+static-ephemeral term \(se\) holds that interval open. \emph{Moreover}, an
+arithmetic analysis carries post-quantum parameter sizes past the
+cryptography and into the network layer, where an in-band ML-KEM-768
+initiation reaches \wgKemInit\,B against a usable IPv6 minimum-MTU payload of
+\wgIpvsixPayload\,B. \emph{Finally}, the failures are reported alongside the
+proofs: \wgNonterm{} queries were left undecided, and they are in the same
+table as the rest.
+
+The numbers make the comparison concrete. Across \wgProps{} properties the two
+provers return \wgProved{} proofs, \wgAttacks{} attacks, \wgInconcl{}
+inconclusive and \wgNonterm{} non-terminating verdicts.
+\ifwgtimings
+ProVerif decides \the\numexpr\wgPvProps-\wgPvNonterm\relax{} of \wgPvProps{}
+properties in \wgPvSpan\,s and exhausts a \wgBudget\,s budget on the other
+\wgPvNonterm; Tamarin decides all \wgTamProps, including both
+key-compromise-impersonation levels, in \wgTamSpan\,s and \wgTamSteps{}
+constraint-solving steps.
+\else
+ProVerif decides \the\numexpr\wgPvProps-\wgPvNonterm\relax{} of \wgPvProps{}
+properties and exhausts a \wgBudget\,s budget on the other \wgPvNonterm;
+Tamarin decides all \wgTamProps, including both key-compromise-impersonation
+levels, in \wgTamSteps{} constraint-solving steps.
+\fi
+The in-band initiation grows by a factor of \wgKemGrowth{} at ML-KEM-768 and
+overshoots the IPv6 minimum-MTU payload by \wgOvershoot\,B, so no in-band
+construction has a guaranteed path---which is why separate-channel designs
+are architecturally necessary rather than merely convenient.
+\end{abstract}
+
+\input{sections/01-introduction}
+\input{sections/02-background}
+\input{sections/03-modelling}
+\input{sections/04-results}
+\input{sections/05-pq-cost}
+\input{sections/06-discussion}
+\input{sections/07-conclusion}
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}

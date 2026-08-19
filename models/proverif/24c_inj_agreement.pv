@@ -1,0 +1,13 @@
+(* P5c and P9 -- injective agreement, and therefore replay resistance.
+   Each completed responder session must correspond to a distinct initiator
+   run.  A replayed handshake initiation would yield two ResponderDone events
+   against a single InitiatorBegin, so this one query carries both the top of
+   Lowe's hierarchy and the replay statement. *)
+query si: G, sr: G, ki: key, kr: key;
+      inj-event(ResponderDone(si, sr, ki, kr)) ==> inj-event(InitiatorBegin(si, sr)).
+process
+  new siA: exponent; let SA = pk(siA) in
+  new srB: exponent; let SB = pk(srB) in
+  new psk: key;
+  out(net, (SA, SB));
+  ( (!Initiator(siA, SA, SB, psk)) | (!Responder(srB, SB, psk)) )

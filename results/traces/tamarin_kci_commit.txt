@@ -1,0 +1,4 @@
+  kci_responder_commit (all-traces): falsified - found trace (18 steps)
+  kci_responder_complete (all-traces): analysis incomplete (1 steps)
+
+==============================================================================
