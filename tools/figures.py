@@ -1,4 +1,4 @@
-"""Generate every figure in the report as SVG, using only the standard library.
+"""Generate every figure as SVG, using only the standard library.
 
 Deliberately no plotting library.  Figures are emitted as text the repository
 can diff, they scale without blurring, and `make figures` needs no virtual
@@ -177,14 +177,14 @@ def fig_kci_gap() -> str:
 
 # --------------------------------------------------------------------------
 def fig_pipeline() -> str:
-    """How one protocol description reaches two provers and one report.
+    """How one protocol description reaches two provers and one result set.
 
     The figure exists to make the central methodological claim checkable at a
-    glance: there is one transcription of the handshake, and everything the
-    report prints is downstream of what the verifiers actually wrote.
+    glance: there is one transcription of the handshake, and every table and
+    figure is downstream of what the verifiers actually wrote.
     """
     W, H = 700, 330
-    b = [_t(20, 24, "One transcription, two provers, one generated report",
+    b = [_t(20, 24, "One transcription, two provers, one result set",
             13, "start", INK, "bold")]
 
     def box(x, y, w, h, title, sub, col=INK, fill="none"):
@@ -221,7 +221,7 @@ def fig_pipeline() -> str:
     b.append(arrow(445, 260, 470, 260))
     b.append(_t(350, 306,
                 "render_tables.py and figures.py turn results.json into every "
-                "table, figure and quoted number in the report",
+                "table and figure",
                 9, "middle", GREY))
     return _svg(W, H, "\n".join(b))
 
@@ -303,286 +303,6 @@ FIGURES = {
 }
 
 
-
-# ==========================================================================
-# TikZ emitters
-#
-# The report cannot include SVG without an external converter, and requiring
-# one would break the promise that `make report` works on a plain TeX Live or
-# BasicTeX installation.  The figures are therefore emitted a second time as
-# TikZ fragments, from the same data as the SVGs above, so the two can never
-# disagree.  SVG is what the README and the web view use; TikZ is what the
-# PDF uses.
-# ==========================================================================
-
-TEXOUT = Path(__file__).resolve().parent.parent / "report" / "generated"
-
-
-def tikz_pq_mtu() -> str:
-    a = pqcost.analyse()
-    bars = [("X25519 (baseline)", a["baseline"]["initiation"])] + \
-           [(k["name"], k["initiation_bytes"]) for k in a["kems"]]
-    ipv6 = next(p for p in a["paths"] if p["name"] == "IPv6 minimum MTU")
-    eth = next(p for p in a["paths"] if p["name"] == "Ethernet, IPv4")
-    sx = lambda v: v / 1800 * 7.4          # bytes -> cm  # noqa: E731
-    L = [r"\begin{tikzpicture}[x=1cm,y=1cm]", r"  \footnotesize"]
-    for i, (name, size) in enumerate(bars):
-        y = -0.75 * i
-        fits = size <= ipv6["udp_payload"]
-        col = "okgreen" if fits else "badred"
-        L.append(rf"  \fill[{col}!78] (0,{y-0.22}) rectangle ({sx(size):.3f},{y+0.22});")
-        L.append(rf"  \node[anchor=east] at (-0.12,{y}) {{{name}}};")
-        L.append(rf"  \node[anchor=west] at ({sx(size)+0.12:.3f},{y}) "
-                 rf"{{\bfseries {size}\,B}};")
-    ylo, yhi = -0.75 * (len(bars) - 1) - 0.5, 0.5
-
-    # The two path limits are 240 B apart, which at this scale is under a
-    # centimetre.  Rotating the labels into the plot put them straight through
-    # the ML-KEM-768 bar; stacking them horizontally above it keeps both
-    # readable and keeps the crossing -- the point of the figure -- visible.
-    for p, crit, dy, anchor in ((ipv6, True, 0.28, "east"), (eth, False, 0.72, "west")):
-        x = sx(p["udp_payload"])
-        col = "badred" if crit else "black!55"
-        L.append(rf"  \draw[{col},dashed,{'thick' if crit else 'thin'}] "
-                 rf"({x:.3f},{ylo}) -- ({x:.3f},{yhi + dy:.2f});")
-        L.append(rf"  \node[{col},anchor={anchor},inner sep=2pt,font=\scriptsize"
-                 rf"{',font=\\scriptsize\\bfseries' if crit else ''}] at "
-                 rf"({x:.3f},{yhi + dy:.2f}) "
-                 rf"{{{p['name']}: {p['udp_payload']}\,B}};")
-
-    L.append(rf"  \draw[->] (0,{ylo-0.35}) -- ({sx(1800):.3f},{ylo-0.35}) "
-             rf"node[anchor=west] {{\scriptsize bytes}};")
-    for v in range(0, 1801, 600):
-        L.append(rf"  \draw ({sx(v):.3f},{ylo-0.45}) -- ({sx(v):.3f},{ylo-0.25}) "
-                 rf"node[anchor=north,yshift=-4pt] {{\scriptsize {v}}};")
-    L.append(r"\end{tikzpicture}")
-    return "\n".join(L) + "\n"
-
-
-def tikz_kci_gap() -> str:
-    """Single-column figure: the two levels, stacked.
-
-    Stacked rather than side by side.  Two 5.6 cm boxes in a row measure 13 cm
-    and \\resizebox then shrinks them to two-thirds of a column, which puts the
-    body text at about seven points.  Stacking keeps the figure near natural
-    size, and the vertical arrow reads as the gap the section is about.
-    """
-    return r"""\begin{tikzpicture}[x=1cm,y=1cm,font=\footnotesize]
-  \node[draw=badred,thick,rounded corners,align=left,inner sep=6pt,
-        text width=7.0cm] (a) at (0,0)
-    {\textbf{\color{badred}1. Forge message 1}\\[2pt]
-     needs $es=\mathrm{DH}(e_i,S_r)$ and $ss=\mathrm{DH}(s_i,S_r)$\\[1pt]
-     {\color{black!55}both computable from the leaked responder scalar}\\[3pt]
-     \hrule\vspace{3pt}
-     {\color{badred}\textbf{S6a falsified}} --- the responder commits key
-     material to a session it attributes to an honest initiator};
-  \node[draw=okgreen,thick,rounded corners,align=left,inner sep=6pt,
-        text width=7.0cm] (b) at (0,-3.15)
-    {\textbf{\color{okgreen}2. Complete the session}\\[2pt]
-     additionally needs $se=\mathrm{DH}(e_r,S_i)$\\[1pt]
-     {\color{black!55}requires the initiator's static scalar, which is not
-      compromised}\\[3pt]
-     \hrule\vspace{3pt}
-     {\color{okgreen}\textbf{S6b verified}} --- no transport record is ever
-     accepted on that session};
-  \draw[->,very thick,black!45] (a.south) -- node[right,black!55,align=left]
-    {\scriptsize the gap $se$ holds open} (b.north);
-\end{tikzpicture}
-"""
-
-
-def tikz_handshake_flow() -> str:
-    """Single-column message flow.
-
-    Laid out to fit a column at close to natural size.  An earlier version was
-    14 cm wide, which \\resizebox then shrank to 60% and left the annotations
-    at about five points -- present in the figure and unreadable in it.
-    Everything now sits between the two lifelines.
-    """
-    return rf"""\begin{{tikzpicture}}[x=1cm,y=1cm,font=\footnotesize]
-  \draw[black!25,thick] (0,-0.25) -- (0,-4.5);
-  \draw[black!25,thick] (6.2,-0.25) -- (6.2,-4.5);
-  \node[anchor=south] at (0,-0.2) {{\bfseries Initiator}};
-  \node[anchor=south] at (6.2,-0.2) {{\bfseries Responder}};
-  \node[anchor=north,black!55,font=\scriptsize] at (0,-0.3)
-    {{static $(s_i,S_i)$, psk}};
-  \node[anchor=north,black!55,font=\scriptsize] at (6.2,-0.3)
-    {{static $(s_r,S_r)$, psk}};
-
-  \draw[->,thick] (0,-1.35) -- (6.2,-1.35);
-  \node[anchor=south,inner sep=2pt] at (3.1,-1.32)
-    {{\bfseries handshake initiation, {total(INITIATION)}\,B}};
-  \node[anchor=north,black!55,font=\scriptsize,align=center,inner sep=2pt]
-    at (3.1,-1.4)
-    {{$E_i$ $\mid$ enc\_static (48\,B) $\mid$ enc\_timestamp (28\,B)\\
-      $\mid$ mac1 $\mid$ mac2}};
-  \node[anchor=west,black!55,font=\scriptsize] at (0.1,-2.25)
-    {{$es=\mathrm{{DH}}(e_i,S_r)$,\quad $ss=\mathrm{{DH}}(s_i,S_r)$}};
-
-  \draw[<-,thick] (0,-3.0) -- (6.2,-3.0);
-  \node[anchor=south,inner sep=2pt] at (3.1,-2.97)
-    {{\bfseries handshake response, {total(RESPONSE)}\,B}};
-  \node[anchor=north,black!55,font=\scriptsize,inner sep=2pt] at (3.1,-3.05)
-    {{$E_r$ $\mid$ enc\_nothing (16\,B) $\mid$ mac1 $\mid$ mac2}};
-  \node[anchor=east,black!55,font=\scriptsize] at (6.1,-3.62)
-    {{$ee=\mathrm{{DH}}(e_r,E_i)$,\quad $se=\mathrm{{DH}}(e_r,S_i)$}};
-  \node[anchor=east,okgreen,font=\scriptsize] at (6.1,-3.92)
-    {{psk mixed by $\mathrm{{KDF}}_3$}};
-
-  \draw[okgreen,dashed,thick] (0,-4.35) -- (6.2,-4.35);
-  \node[anchor=south,okgreen,font=\scriptsize,inner sep=2pt] at (3.1,-4.32)
-    {{transport keys $(T_i,T_r)=\mathrm{{KDF}}_2(ck,\varepsilon)$}};
-\end{{tikzpicture}}
-"""
-
-
-def tikz_pipeline() -> str:
-    """Two-column figure: specification to PDF, with the fork in the middle."""
-    return r"""\begin{tikzpicture}[x=1cm,y=1cm,font=\footnotesize,
-    bx/.style={draw=black!55,rounded corners=2pt,align=center,inner sep=4pt,
-               text width=3.2cm,minimum height=1.0cm},
-    hi/.style={bx,draw=okgreen,very thick},
-    lnk/.style={->,thick,black!45}]
-
-  \node[bx] (spec) at (1.7,0)
-    {\textbf{WireGuard specification}\\{\scriptsize wire format $+$ Noise \texttt{IKpsk2}}};
-  \node[hi] (core) at (5.6,0)
-    {\textbf{one shared core}\\{\scriptsize \texttt{wireguard\_core.pvl}}};
-  \node[bx] (pv) at (9.5,1.05)
-    {\textbf{ProVerif models}\\{\scriptsize one file per property}};
-  \node[bx] (tam) at (9.5,-1.05)
-    {\textbf{Tamarin theory}\\{\scriptsize transcribed term for term}};
-  \node[bx] (run) at (13.4,0)
-    {\textbf{\texttt{runner.py}}\\{\scriptsize wall-clock $+$ memory budget}};
-  \node[bx] (raw) at (17.3,0)
-    {\textbf{\texttt{results/raw/}}\\{\scriptsize verbatim prover output}};
-
-  \node[hi] (json) at (17.3,-3.1)
-    {\textbf{\texttt{results.json}}\\{\scriptsize machine-readable verdicts}};
-  \node[bx] (exp) at (13.4,-3.1)
-    {\textbf{\texttt{expectations.yaml}}\\{\scriptsize regression gate}};
-  \node[bx] (gen) at (9.5,-3.1)
-    {\textbf{\texttt{render\_tables.py}}\\{\scriptsize tables, figures, \texttt{facts.tex}}};
-  \node[bx] (tex) at (5.6,-3.1)
-    {\textbf{\texttt{report/main.tex}}\\{\scriptsize prose only; no typed numbers}};
-  \node[hi] (pdf) at (1.7,-3.1)
-    {\textbf{\texttt{docs/report.pdf}}\\{\scriptsize built by \texttt{make report}}};
-
-  \draw[lnk] (spec) -- (core);
-  \draw[lnk] (core.east) -- (pv.west);
-  \draw[lnk] (core.east) -- (tam.west);
-  \draw[lnk] (pv.east) -- (run.west);
-  \draw[lnk] (tam.east) -- (run.west);
-  \draw[lnk] (run) -- (raw);
-  \draw[lnk] (raw) -- node[left,black!55,font=\scriptsize,align=right]
-    {\texttt{collect\_}\\\texttt{results.py}} (json);
-  \draw[lnk] (json) -- (exp);
-  \draw[lnk] (exp) -- (gen);
-  \draw[lnk] (gen) -- (tex);
-  \draw[lnk] (tex) -- (pdf);
-\end{tikzpicture}
-"""
-
-
-def tikz_compromise() -> str:
-    """Single-column figure: what the attacker gains, and when."""
-    return r"""\begin{tikzpicture}[x=1cm,y=1cm,font=\footnotesize]
-  \fill[okgreen!12] (0,0) rectangle (4.2,0.72);
-  \fill[badred!12]  (4.2,0) rectangle (8.4,0.72);
-  \node at (2.1,0.36) {\bfseries phase 0 --- sessions run};
-  \node at (6.3,0.36) {\bfseries phase 1 --- after the fact};
-  \draw[badred,dashed,thick] (4.2,-1.42) -- (4.2,0.95);
-
-  \node[anchor=north west,text width=3.9cm,black!60,inner sep=2pt,
-        font=\scriptsize] at (0.05,-0.06)
-    {Dolev--Yao network control. Every ephemeral public value travels in
-     clear, so all of it can be recorded.};
-  \node[anchor=north west,text width=3.9cm,badred,inner sep=2pt,
-        font=\scriptsize] at (4.3,-0.06)
-    {Static scalars released and a discrete-logarithm oracle exposed: every
-     recorded public value inverts.};
-
-  \draw[black!25] (0,-1.6) -- (8.4,-1.6);
-  \node[anchor=west,black!55,font=\scriptsize\itshape] at (0,-1.82)
-    {which properties depend on this staging};
-"""+ "".join(
-    rf"""  \node[anchor=west] at (0,{-2.2 - 0.32 * i:.2f}) {{{name}}};
-  \node[anchor=east,{col}] at (8.4,{-2.2 - 0.32 * i:.2f}) {{\bfseries {verdict}}};
-"""
-    for i, (name, verdict, col) in enumerate([
-        (r"P3\quad forward secrecy, statics released", "proved", "okgreen"),
-        (r"P4\quad post-quantum FS, psk secret", "proved", "okgreen"),
-        (r"P4c\ \ the same model, psk published", "attack found", "badred"),
-        (r"S6a/S6b\ \ KCI, responder static leaked", "the gap", "black!55"),
-    ])) + r"""\end{tikzpicture}
-"""
-
-
-def tikz_cost() -> str:
-    """Single-column figure: wall-clock per property, grouped by prover.
-
-    Emitted only when the current results carry per-query timings.  A run that
-    predates cost recording gets an empty fragment and the report's
-    \\ifwgtimings guard drops the figure rather than printing an empty axis.
-    """
-    rs = [r for r in result_rows() if r[4] is not None]
-    if not rs:
-        return "%% no per-query timings in results/results.json; figure omitted\n"
-
-    budget = max(max(r[4] for r in rs), 1)
-    xw = 3.4                                   # cm of bar area
-    L = [r"\begin{tikzpicture}[x=1cm,y=1cm,font=\scriptsize]"]
-    y = 0.0
-    for tool in ("ProVerif", "Tamarin"):
-        mine = [r for r in rs if r[2] == tool]
-        if not mine:
-            continue
-        L.append(rf"  \node[anchor=west,font=\scriptsize\bfseries] at (-4.5,{y:.2f}) "
-                 rf"{{{tool}}};")
-        y -= 0.34
-        for pid, desc, _, outcome, secs in mine:
-            # Full colour specs, not a base colour plus a shade suffix: the
-            # inconclusive base is already `black!35`, and appending another
-            # `!85` to it produces `black!35!85`, which xcolor rejects.
-            fill = {"proved": "okgreen!85", "attack_found": "badred!85",
-                    "nonterminating": "badred!50", "inconclusive": "black!35"}[outcome]
-            w = max(secs / budget * xw, 0.03)
-            label = desc.strip().replace("&", r"\&")
-            label = (label[:30] + r"\dots") if len(label) > 31 else label
-            L.append(rf"  \node[anchor=east] at (-0.12,{y:.2f}) "
-                     rf"{{{pid}\ \ {label}}};")
-            L.append(rf"  \fill[{fill}] "
-                     rf"(0,{y - 0.11:.2f}) rectangle ({w:.3f},{y + 0.11:.2f});")
-            mark = r"$^\dagger$" if outcome == "nonterminating" else ""
-            shown = r"$<$1" if secs == 0 else str(secs)
-            L.append(rf"  \node[anchor=west,black!60] at ({w + 0.08:.3f},{y:.2f}) "
-                     rf"{{{shown}\,s{mark}}};")
-            y -= 0.3
-        y -= 0.18
-
-    y += 0.18
-    L += [rf"  \draw[black!55] (0,{y:.2f}) -- ({xw:.2f},{y:.2f});"]
-    for frac in (0, 0.5, 1.0):
-        v = int(round(budget * frac))
-        L.append(rf"  \draw[black!55] ({xw * frac:.2f},{y:.2f}) -- "
-                 rf"({xw * frac:.2f},{y - 0.09:.2f}) "
-                 rf"node[anchor=north,inner sep=2pt] {{{v}}};")
-    L.append(rf"  \node[anchor=north] at ({xw / 2:.2f},{y - 0.34:.2f}) "
-             rf"{{seconds}};")
-    L.append(r"\end{tikzpicture}")
-    return "\n".join(L) + "\n"
-
-
-TIKZ = {
-    "fig_pipeline.tex": tikz_pipeline,
-    "fig_handshake_flow.tex": tikz_handshake_flow,
-    "fig_compromise.tex": tikz_compromise,
-    "fig_pq_mtu.tex": tikz_pq_mtu,
-    "fig_kci_gap.tex": tikz_kci_gap,
-    "fig_cost.tex": tikz_cost,
-}
-
-
 if __name__ == "__main__":
     # A generator that returns nothing has no data to draw -- the cost figure
     # before any run has recorded per-query timings.  Writing a zero-byte SVG
@@ -601,16 +321,4 @@ if __name__ == "__main__":
         n_svg += 1
         print(f"  svg   {name:<24} {len(body):>6} B")
 
-    TEXOUT.mkdir(parents=True, exist_ok=True)
-    n_tikz = 0
-    for name, fn in TIKZ.items():
-        body = fn()
-        # The TikZ fragment is always written, even when it is only a comment:
-        # the report guards its \input with \ifwgtimings, and a missing file
-        # would turn a deliberately omitted figure into a build failure.
-        (TEXOUT / name).write_text(body)
-        drawn = "tikzpicture" in body
-        n_tikz += drawn
-        print(f"  tikz  {name:<24} "
-              + (f"{len(body):>6} B" if drawn else f"{'omitted -- no data yet':>22}"))
-    print(f"wrote {n_svg} SVG + {n_tikz} TikZ figures")
+    print(f"wrote {n_svg} SVG figures")

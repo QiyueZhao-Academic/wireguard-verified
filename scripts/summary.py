@@ -55,19 +55,13 @@ def main() -> int:
         print(f"  settle the question in budget, not that an attack exists.{RST}")
 
     print(f"\n{BOLD}Artifacts{RST}")
-    for p, what in (("docs/report.pdf", "technical report"),
-                    ("results/results.json", "machine-readable results"),
+    for p, what in (("results/results.json", "machine-readable results"),
                     ("results/figures/", "SVG figures"),
                     ("results/traces/", "attack derivations"),
                     ("docs/generated/results.md", "result table")):
         exists = (ROOT / p).exists()
         tick = f"{GREEN}ok{RST}" if exists else f"{GREY}--{RST}"
         print(f"  [{tick}] {p:<28} {DIM}{what}{RST}")
-        if p == "docs/report.pdf" and not exists:
-            # The report is compiled, never shipped, so its absence is a
-            # missing build step rather than a missing file.
-            print(f"       {DIM}not built yet -- run `make report` "
-                  f"(needs latexmk){RST}")
     print()
     return 0
 

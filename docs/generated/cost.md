@@ -2,24 +2,24 @@
 
 | ID | Property | Tool | Outcome | Wall-clock (s) |
 |---|---|---|---|---:|
-| P1 | Session-key secrecy | ProVerif | proved | 19 |
-| P3 | Forward secrecy | ProVerif | proved | 20 |
-| P4 | Post-quantum forward secrecy (psk) | ProVerif | proved | 20 |
-| P4c | same, psk absent (control) | ProVerif | attack found | 20 |
-| P5a | Agreement, responder to initiator | ProVerif | non-terminating | 300 |
-| P5b | Agreement, initiator to responder | ProVerif | proved | 23 |
-| P5c | Injective agreement / replay (P9) | ProVerif | proved | 24 |
-| P6a | KCI, commitment level | ProVerif | non-terminating | 300 |
-| P6b | KCI, completion level | ProVerif | non-terminating | 300 |
-| P12a | KEM-derived psk secrecy, K-PK binding | ProVerif | proved | <1 |
-| P12b | same, binding absent (control) | ProVerif | attack found | <1 |
-| P12c | KEM-derived psk, responder-view soundness | ProVerif | inconclusive | <1 |
-| S0 | Model admits an honest run | Tamarin | proved | 3 |
-| S1 | Session-key secrecy | Tamarin | proved | 2 |
-| S3 | Forward secrecy | Tamarin | proved | 2 |
-| S5 | Agreement, no compromise | Tamarin | proved | 2 |
-| S6a | KCI, commitment level | Tamarin | attack found | 3 |
-| S6b | KCI, completion level | Tamarin | proved | 2 |
+| P1 | Session-key secrecy | ProVerif | proved | n/r |
+| P3 | Forward secrecy | ProVerif | proved | n/r |
+| P4 | Post-quantum forward secrecy (psk) | ProVerif | proved | n/r |
+| P4c | same, psk absent (control) | ProVerif | attack found | n/r |
+| P5a | Agreement, responder to initiator | ProVerif | non-terminating | n/r |
+| P5b | Agreement, initiator to responder | ProVerif | proved | n/r |
+| P5c | Injective agreement / replay (P9) | ProVerif | proved | n/r |
+| P6a | KCI, commitment level | ProVerif | non-terminating | n/r |
+| P6b | KCI, completion level | ProVerif | non-terminating | n/r |
+| P12a | KEM-derived psk secrecy, K-PK binding | ProVerif | proved | n/r |
+| P12b | same, binding absent (control) | ProVerif | attack found | n/r |
+| P12c | KEM-derived psk, responder-view soundness | ProVerif | inconclusive | n/r |
+| S0 | Model admits an honest run | Tamarin | proved | n/r |
+| S1 | Session-key secrecy | Tamarin | proved | n/r |
+| S3 | Forward secrecy | Tamarin | proved | n/r |
+| S5 | Agreement, no compromise | Tamarin | proved | n/r |
+| S6a | KCI, commitment level | Tamarin | attack found | n/r |
+| S6b | KCI, completion level | Tamarin | proved | n/r |
 
 A non-terminating row shows the budget it exhausted, not a time to
 a verdict. `n/r` means the run behind that row predates per-query

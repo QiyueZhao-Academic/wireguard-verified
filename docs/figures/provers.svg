@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="668" viewBox="0 0 960 668" role="img">
+<title>Time and outcome per property for ProVerif and Tamarin</title>
+<rect x="0.5" y="0.5" width="959.0" height="667.0" rx="12" fill="#ffffff" stroke="#d0d7de" stroke-width="1"/>
+<text x="28.0" y="44.0" font-family="Helvetica, Arial, sans-serif" font-size="21" font-weight="bold" fill="#1f2328" text-anchor="start">Two provers, one model: time and outcome per property</text>
+<text x="28.0" y="67.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#57606a" text-anchor="start">Single core, 300 s wall-clock budget per query. Grey bars reached the budget without a verdict.</text>
+<rect x="28.0" y="84.0" width="12.0" height="12.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="46.0" y="94.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">proved</text>
+<rect x="115.2" y="84.0" width="12.0" height="12.0" rx="2" fill="#a33a2a" stroke="none" stroke-width="1"/>
+<text x="133.2" y="94.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">attack found</text>
+<rect x="245.6" y="84.0" width="12.0" height="12.0" rx="2" fill="#9a6700" stroke="none" stroke-width="1"/>
+<text x="263.6" y="94.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">inconclusive</text>
+<rect x="376.0" y="84.0" width="12.0" height="12.0" rx="2" fill="#6e7781" stroke="none" stroke-width="1"/>
+<text x="394.0" y="94.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">non-terminating</text>
+<text x="28.0" y="130.0" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1f2328" text-anchor="start">ProVerif 2.05 · 12 properties</text>
+<text x="28.0" y="154.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P1</text>
+<text x="80.0" y="154.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Transport-key secrecy</text>
+<rect x="372.0" y="143.0" width="25.3" height="14.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="404.3" y="154.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">19 s</text>
+<text x="932.0" y="154.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#2f6f4e" text-anchor="end">proved</text>
+<text x="28.0" y="177.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P3</text>
+<text x="80.0" y="177.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Forward secrecy</text>
+<rect x="372.0" y="166.0" width="26.7" height="14.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="405.7" y="177.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">20 s</text>
+<text x="932.0" y="177.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#2f6f4e" text-anchor="end">proved</text>
+<text x="28.0" y="200.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P4</text>
+<text x="80.0" y="200.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Post-quantum forward secrecy, secret PSK</text>
+<rect x="372.0" y="189.0" width="26.7" height="14.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="405.7" y="200.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">20 s</text>
+<text x="932.0" y="200.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#2f6f4e" text-anchor="end">proved</text>
+<text x="28.0" y="223.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P4c</text>
+<text x="80.0" y="223.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Post-quantum forward secrecy, public PSK</text>
+<rect x="372.0" y="212.0" width="26.7" height="14.0" rx="2" fill="#a33a2a" stroke="none" stroke-width="1"/>
+<text x="405.7" y="223.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">20 s</text>
+<text x="932.0" y="223.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#a33a2a" text-anchor="end">attack found</text>
+<text x="28.0" y="246.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P5a</text>
+<text x="80.0" y="246.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Agreement for the initiator</text>
+<rect x="372.0" y="235.0" width="400.0" height="14.0" rx="2" fill="#6e7781" stroke="none" stroke-width="1"/>
+<text x="779.0" y="246.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">300 s</text>
+<text x="932.0" y="246.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#6e7781" text-anchor="end">non-terminating</text>
+<text x="28.0" y="269.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P5b</text>
+<text x="80.0" y="269.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Responder agreement at completion</text>
+<rect x="372.0" y="258.0" width="30.7" height="14.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="409.7" y="269.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">23 s</text>
+<text x="932.0" y="269.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#2f6f4e" text-anchor="end">proved</text>
+<text x="28.0" y="292.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P5c</text>
+<text x="80.0" y="292.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Injective agreement at completion</text>
+<rect x="372.0" y="281.0" width="32.0" height="14.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="411.0" y="292.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">24 s</text>
+<text x="932.0" y="292.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#2f6f4e" text-anchor="end">proved</text>
+<text x="28.0" y="315.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P6a</text>
+<text x="80.0" y="315.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">KCI resistance at commitment</text>
+<rect x="372.0" y="304.0" width="400.0" height="14.0" rx="2" fill="#6e7781" stroke="none" stroke-width="1"/>
+<text x="779.0" y="315.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">300 s</text>
+<text x="932.0" y="315.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#6e7781" text-anchor="end">non-terminating</text>
+<text x="28.0" y="338.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P6b</text>
+<text x="80.0" y="338.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">KCI resistance at completion</text>
+<rect x="372.0" y="327.0" width="400.0" height="14.0" rx="2" fill="#6e7781" stroke="none" stroke-width="1"/>
+<text x="779.0" y="338.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">300 s</text>
+<text x="932.0" y="338.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#6e7781" text-anchor="end">non-terminating</text>
+<text x="28.0" y="361.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P12a</text>
+<text x="80.0" y="361.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">KEM-derived PSK secrecy, binding KEM</text>
+<rect x="372.0" y="350.0" width="3.0" height="14.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="382.0" y="361.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">&lt;1 s</text>
+<text x="932.0" y="361.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#2f6f4e" text-anchor="end">proved</text>
+<text x="28.0" y="384.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P12b</text>
+<text x="80.0" y="384.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">KEM-derived PSK secrecy, non-binding KEM</text>
+<rect x="372.0" y="373.0" width="3.0" height="14.0" rx="2" fill="#a33a2a" stroke="none" stroke-width="1"/>
+<text x="382.0" y="384.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">&lt;1 s</text>
+<text x="932.0" y="384.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#a33a2a" text-anchor="end">attack found</text>
+<text x="28.0" y="407.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">P12c</text>
+<text x="80.0" y="407.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Soundness of the responder&#8217;s PSK view</text>
+<rect x="372.0" y="396.0" width="3.0" height="14.0" rx="2" fill="#9a6700" stroke="none" stroke-width="1"/>
+<text x="382.0" y="407.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">&lt;1 s</text>
+<text x="932.0" y="407.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#9a6700" text-anchor="end">inconclusive</text>
+<text x="28.0" y="448.0" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1f2328" text-anchor="start">Tamarin 1.12.0 · 6 lemmas</text>
+<text x="28.0" y="472.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">S0</text>
+<text x="80.0" y="472.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Executability of an honest run</text>
+<rect x="372.0" y="461.0" width="4.0" height="14.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="383.0" y="472.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">3 s</text>
+<text x="932.0" y="472.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#2f6f4e" text-anchor="end">proved</text>
+<text x="28.0" y="495.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">S1</text>
+<text x="80.0" y="495.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Transport-key secrecy</text>
+<rect x="372.0" y="484.0" width="3.0" height="14.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="382.0" y="495.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">2 s</text>
+<text x="932.0" y="495.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#2f6f4e" text-anchor="end">proved</text>
+<text x="28.0" y="518.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">S3</text>
+<text x="80.0" y="518.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Forward secrecy</text>
+<rect x="372.0" y="507.0" width="3.0" height="14.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="382.0" y="518.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">2 s</text>
+<text x="932.0" y="518.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#2f6f4e" text-anchor="end">proved</text>
+<text x="28.0" y="541.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">S5</text>
+<text x="80.0" y="541.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">Responder agreement at commitment</text>
+<rect x="372.0" y="530.0" width="3.0" height="14.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="382.0" y="541.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">2 s</text>
+<text x="932.0" y="541.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#2f6f4e" text-anchor="end">proved</text>
+<text x="28.0" y="564.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">S6a</text>
+<text x="80.0" y="564.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">KCI resistance at commitment</text>
+<rect x="372.0" y="553.0" width="4.0" height="14.0" rx="2" fill="#a33a2a" stroke="none" stroke-width="1"/>
+<text x="383.0" y="564.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">3 s</text>
+<text x="932.0" y="564.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#a33a2a" text-anchor="end">attack found</text>
+<text x="28.0" y="587.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">S6b</text>
+<text x="80.0" y="587.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">KCI resistance at completion</text>
+<rect x="372.0" y="576.0" width="3.0" height="14.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="382.0" y="587.5" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">2 s</text>
+<text x="932.0" y="587.5" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#2f6f4e" text-anchor="end">proved</text>
+<line x1="372" y1="610" x2="772" y2="610" stroke="#57606a" stroke-width="1"/>
+<line x1="372.0" y1="610" x2="372.0" y2="615" stroke="#57606a" stroke-width="1"/>
+<text x="372.0" y="630.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="middle">0</text>
+<line x1="452.0" y1="610" x2="452.0" y2="615" stroke="#57606a" stroke-width="1"/>
+<text x="452.0" y="630.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="middle">60</text>
+<line x1="532.0" y1="610" x2="532.0" y2="615" stroke="#57606a" stroke-width="1"/>
+<text x="532.0" y="630.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="middle">120</text>
+<line x1="612.0" y1="610" x2="612.0" y2="615" stroke="#57606a" stroke-width="1"/>
+<text x="612.0" y="630.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="middle">180</text>
+<line x1="692.0" y1="610" x2="692.0" y2="615" stroke="#57606a" stroke-width="1"/>
+<text x="692.0" y="630.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="middle">240</text>
+<line x1="772.0" y1="610" x2="772.0" y2="615" stroke="#57606a" stroke-width="1"/>
+<text x="772.0" y="630.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#57606a" text-anchor="middle">300</text>
+<text x="572.0" y="648.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="middle">wall-clock time (seconds)</text>
+</svg>

@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 # WireGuard-Verified -- one command, from a fresh machine to a finished result
-# set and a compiled report.
+# set, with its figures and tables.
 #
 #   bash run.sh                install what is missing, then run everything
 #   bash run.sh --check        environment report only, change nothing
 #   bash run.sh --install      install dependencies only
 #   bash run.sh --run          run the pipeline only, install nothing
-#   bash run.sh --no-latex     install everything except the LaTeX packages
-#                              (this is what avoids the password prompt)
 #
 # Every step is also available on its own; see `make help`.
 
@@ -26,14 +24,13 @@ ROOT="$(pwd)"
 
 BOLD=$'\033[1m'; DIM=$'\033[2m'; RST=$'\033[0m'
 
-DO_INSTALL=1; DO_RUN=1; DO_CHECK=0; NO_LATEX=0
+DO_INSTALL=1; DO_RUN=1; DO_CHECK=0
 for a in "$@"; do
   case "$a" in
     --check)      DO_CHECK=1; DO_INSTALL=0; DO_RUN=0 ;;
     --install)    DO_RUN=0 ;;
     --run|--no-install) DO_INSTALL=0 ;;
-    --no-latex)   NO_LATEX=1 ;;
-    -h|--help)    sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help)    sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown option: $a" >&2
        echo "try: bash run.sh --help" >&2; exit 2 ;;
   esac
@@ -66,12 +63,7 @@ fi
 start=$(date +%s)
 
 if [ "$DO_INSTALL" -eq 1 ]; then
-  # bash 3.2 safe: pass the flag as a plain word, never as an empty array.
-  if [ "$NO_LATEX" -eq 1 ]; then
-    bash scripts/bootstrap.sh --no-latex
-  else
-    bash scripts/bootstrap.sh
-  fi
+  bash scripts/bootstrap.sh
   # bootstrap runs in its own shell, so anything it added to PATH -- the opam
   # switch in particular -- has to be picked up again here.
   load_opam_env
@@ -91,7 +83,8 @@ printf '\n%sTotal elapsed: %s min %s s%s\n' \
 if [ "$DO_RUN" -eq 1 ]; then
   echo
   if [ $rc -eq 0 ]; then
-    printf '%sDone.%s  Report: %s/docs/report.pdf\n' "$BOLD" "$RST" "$ROOT"
+    printf '%sDone.%s  Results: %s/results/results.json\n' "$BOLD" "$RST" "$ROOT"
+    printf '       Figures: %s/results/figures/\n' "$ROOT"
   else
     printf '%sFinished with a mismatch.%s  Inspect: %s/results/raw/\n' \
       "$BOLD" "$RST" "$ROOT"

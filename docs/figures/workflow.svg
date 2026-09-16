@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="452" viewBox="0 0 960 452" role="img">
+<title>How the analysis works</title>
+<rect x="0.5" y="0.5" width="959.0" height="451.0" rx="12" fill="#ffffff" stroke="#d0d7de" stroke-width="1"/>
+<text x="28.0" y="44.0" font-family="Helvetica, Arial, sans-serif" font-size="21" font-weight="bold" fill="#1f2328" text-anchor="start">How the analysis works</text>
+<text x="28.0" y="78.0" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#0969da" text-anchor="start">A   Verification: one model, two provers</text>
+<rect x="28.0" y="96.0" width="176.0" height="92.0" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<rect x="28.0" y="106.0" width="4.0" height="72.0" rx="2" fill="#1f2328" stroke="none" stroke-width="1"/>
+<text x="44.0" y="124.0" font-family="Helvetica, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#1f2328" text-anchor="start">WireGuard spec</text>
+<text x="44.0" y="146.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">Noise IKpsk2 pattern</text>
+<text x="44.0" y="164.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">148 B / 92 B messages</text>
+<rect x="234.0" y="96.0" width="196.0" height="92.0" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<rect x="234.0" y="106.0" width="4.0" height="72.0" rx="2" fill="#1f2328" stroke="none" stroke-width="1"/>
+<text x="250.0" y="124.0" font-family="Helvetica, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#1f2328" text-anchor="start">One transcription</text>
+<text x="250.0" y="146.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">shared ProVerif core</text>
+<text x="250.0" y="164.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">Tamarin: term-for-term</text>
+<rect x="468.0" y="88.0" width="240.0" height="78.0" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<rect x="468.0" y="98.0" width="4.0" height="58.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="484.0" y="116.0" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1f2328" text-anchor="start">ProVerif · 12 properties</text>
+<text x="484.0" y="138.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">phases: compromise after the fact</text>
+<text x="484.0" y="156.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">forward + post-quantum secrecy</text>
+<rect x="468.0" y="176.0" width="240.0" height="78.0" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<rect x="468.0" y="186.0" width="4.0" height="58.0" rx="2" fill="#2f6f4e" stroke="none" stroke-width="1"/>
+<text x="484.0" y="204.0" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1f2328" text-anchor="start">Tamarin · 6 lemmas</text>
+<text x="484.0" y="226.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">action facts: event ordering</text>
+<text x="484.0" y="244.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">KCI at commitment + completion</text>
+<rect x="738.0" y="96.0" width="194.0" height="144.0" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<rect x="738.0" y="106.0" width="4.0" height="124.0" rx="2" fill="#0969da" stroke="none" stroke-width="1"/>
+<text x="754.0" y="124.0" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2328" text-anchor="start">18 verdicts</text>
+<text x="754.0" y="146.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">11 proved, 3 attacks,</text>
+<text x="754.0" y="164.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">1 inconclusive,</text>
+<text x="754.0" y="182.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">3 non-terminating</text>
+<text x="754.0" y="200.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">vs. expectations.yaml</text>
+<line x1="204" y1="142" x2="223.6" y2="142" stroke="#6e7781" stroke-width="2"/><polygon points="232,142 222.2,136.4 222.2,147.6" fill="#6e7781"/>
+<polyline points="430,142 449,142 449,127 466,127" fill="none" stroke="#6e7781" stroke-width="2"/>
+<line x1="458" y1="127" x2="457.6" y2="127" stroke="#6e7781" stroke-width="2"/><polygon points="466,127 456.2,121.4 456.2,132.6" fill="#6e7781"/>
+<polyline points="430,142 449,142 449,215 466,215" fill="none" stroke="#6e7781" stroke-width="2"/>
+<line x1="458" y1="215" x2="457.6" y2="215" stroke="#6e7781" stroke-width="2"/><polygon points="466,215 456.2,209.4 456.2,220.6" fill="#6e7781"/>
+<polyline points="708,127 722,127 722,168 736,168" fill="none" stroke="#6e7781" stroke-width="2"/>
+<polyline points="708,215 722,215 722,168" fill="none" stroke="#6e7781" stroke-width="2"/>
+<line x1="728" y1="168" x2="727.6" y2="168" stroke="#6e7781" stroke-width="2"/><polygon points="736,168 726.2,162.4 726.2,173.6" fill="#6e7781"/>
+<line x1="28" y1="282" x2="932" y2="282" stroke="#d0d7de" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="28.0" y="312.0" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#a33a2a" text-anchor="start">B   Post-quantum cost: pure arithmetic, no measurement</text>
+<rect x="28.0" y="330.0" width="176.0" height="92.0" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<rect x="28.0" y="340.0" width="4.0" height="72.0" rx="2" fill="#1f2328" stroke="none" stroke-width="1"/>
+<text x="44.0" y="358.0" font-family="Helvetica, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#1f2328" text-anchor="start">Wire format</text>
+<text x="44.0" y="380.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">25 fields mapped</text>
+<text x="44.0" y="398.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">initiation: 148 B</text>
+<rect x="234.0" y="330.0" width="196.0" height="92.0" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<rect x="234.0" y="340.0" width="4.0" height="72.0" rx="2" fill="#1f2328" stroke="none" stroke-width="1"/>
+<text x="250.0" y="358.0" font-family="Helvetica, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#1f2328" text-anchor="start">Swap in ML-KEM</text>
+<text x="250.0" y="380.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">ek: 800 to 1568 B</text>
+<text x="250.0" y="398.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">ct: 768 to 1568 B</text>
+<rect x="468.0" y="330.0" width="240.0" height="92.0" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<rect x="468.0" y="340.0" width="4.0" height="72.0" rx="2" fill="#1f2328" stroke="none" stroke-width="1"/>
+<text x="484.0" y="358.0" font-family="Helvetica, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#1f2328" text-anchor="start">Datagram size</text>
+<text x="484.0" y="380.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">ML-KEM-768 initiation</text>
+<text x="484.0" y="398.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#1f2328" text-anchor="start">1300 B (×8.8)</text>
+<rect x="738.0" y="330.0" width="194.0" height="92.0" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<rect x="738.0" y="340.0" width="4.0" height="72.0" rx="2" fill="#a33a2a" stroke="none" stroke-width="1"/>
+<text x="754.0" y="358.0" font-family="Helvetica, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#1f2328" text-anchor="start">IPv6 minimum MTU</text>
+<text x="754.0" y="380.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#57606a" text-anchor="start">1232 B usable payload</text>
+<text x="754.0" y="398.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#a33a2a" text-anchor="start">exceeded by 68 B</text>
+<line x1="204" y1="376" x2="223.6" y2="376" stroke="#6e7781" stroke-width="2"/><polygon points="232,376 222.2,370.4 222.2,381.6" fill="#6e7781"/>
+<line x1="430" y1="376" x2="457.6" y2="376" stroke="#6e7781" stroke-width="2"/><polygon points="466,376 456.2,370.4 456.2,381.6" fill="#6e7781"/>
+<line x1="708" y1="376" x2="727.6" y2="376" stroke="#6e7781" stroke-width="2"/><polygon points="736,376 726.2,370.4 726.2,381.6" fill="#6e7781"/>
+</svg>

@@ -38,10 +38,9 @@ not honour RLIMIT_AS). Budgets are applied by `scripts/runner.py`.
 Wall-clock cost is deliberately absent from this table. It is machine-specific
 and it changes on every run, so writing it down here is how a document starts
 disagreeing with the results it describes — which is exactly what happened to
-an earlier revision of `docs/report.pdf`. The measured cost of the run
-currently in `results/` is generated into
-[`generated/cost.md`](generated/cost.md) by `make tables`, and the report
-quotes the same numbers from the same source.
+an earlier revision of the report. The measured cost of the run currently in
+`results/` is generated into [`generated/cost.md`](generated/cost.md) by
+`make tables`.
 
 The pattern is one-directional. ProVerif proved what it could prove quickly
 and then failed completely rather than slowly, exhausting its budget rather

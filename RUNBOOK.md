@@ -1,7 +1,7 @@
 # Runbook
 
-From a fresh macOS on Apple Silicon to a reproduced result set and a compiled
-report.
+From a fresh macOS on Apple Silicon to a reproduced result set, with its
+figures and tables.
 
 Tested against macOS Tahoe 26.x on an Apple M1 with 8 GB, and on Linux x86-64
 and arm64.
@@ -16,26 +16,9 @@ Paste this into Terminal. It does not matter which directory you are in.
 bash ~/wg-verified/wireguard-verified/run.sh
 ```
 
-That is the entire procedure. It installs ProVerif, Tamarin and the LaTeX
-packages, runs both model suites, checks every verdict against
-`expectations.yaml`, regenerates the figures and tables, compiles the report,
-and prints a summary. About nine minutes on an M1.
-
-**You will be asked for your password once**, when the LaTeX packages are
-installed. Nothing appears on screen while you type — not even dots. That is
-normal; type it and press Return.
-
-To skip the password entirely:
-
-```sh
-bash ~/wg-verified/wireguard-verified/run.sh --no-latex
-```
-
-Skipping this means no `docs/report.pdf`: the report is compiled from source
-by `make report`, not shipped prebuilt. Everything else still runs. The
-IEEE document class itself is bundled in `report/vendor/`, so once you have
-any TeX installation with `pdflatex` and `latexmk`, no further package
-install is needed.
+That is the entire procedure. It installs ProVerif and Tamarin, runs both
+model suites, checks every verdict against `expectations.yaml`, regenerates
+the figures and tables, and prints a summary. About nine minutes on an M1.
 
 ### The other three commands
 
@@ -64,11 +47,10 @@ or downgraded.
 ### What you will see
 
 ```
-=== 1/5  environment ===
-=== 2/5  static checks ===
-=== 3/5  verification ===          <- the long part, about 8 minutes
-=== 4/5  figures and tables ===
-=== 5/5  report ===
+=== 1/4  environment ===
+=== 2/4  static checks ===
+=== 3/4  verification ===          <- the long part, about 8 minutes
+=== 4/4  figures and tables ===
 ```
 
 Three ProVerif queries sit at their full budget and then move on:
@@ -86,7 +68,7 @@ their budget; see section 3. The run ends with `expectations 18/18 match`.
 
 Nothing aborts. Each half of the verification is guarded on its own tool: with
 no ProVerif the ProVerif queries are skipped and the shipped ProVerif results
-are kept, and likewise for Tamarin. Figures, tables and the report are still
+are kept, and likewise for Tamarin. Figures and tables are still
 regenerated, and the summary says what was skipped. The static half of the
 repository needs nothing but Python 3.
 
@@ -111,7 +93,7 @@ you actually want.
 
 ```sh
 make check      # wire layout, model lint, table cross-check
-make figures    # SVG + TikZ figures
+make figures    # SVG figures
 make tables     # result tables from the shipped results.json
 ```
 
@@ -186,29 +168,6 @@ make verify-proverif
 ```
 
 Expect roughly seven minutes.
-
-### LaTeX
-
-BasicTeX is minimal and needs a few packages added. If you already have the
-full MacTeX, skip the `tlmgr` line.
-
-```sh
-brew install --cask basictex
-eval "$(/usr/libexec/path_helper)"
-sudo tlmgr update --self
-sudo tlmgr install ieeetran latexmk booktabs pgf xcolor microtype cite
-```
-
-If `tlmgr install` reports an unknown package name, drop that name and rerun —
-some are already present in your installation. `ieeetran` is the one name you
-can ignore entirely: `IEEEtran.cls` and `IEEEtran.bst` are bundled in
-`report/vendor/` and are put first on `TEXINPUTS` by the `report` target, so
-the build does not depend on tlmgr finding them.
-
-```sh
-make report
-open docs/report.pdf
-```
 
 ---
 
@@ -322,14 +281,10 @@ See `lab/README.md`.
 | Tamarin: `maude tool: not found` | Maude not on PATH | `brew install maude` |
 | Tamarin: `unsupported version '3.2'` | Maude outside Tamarin's accepted list | Benign. Proofs run and verdicts are valid |
 | Tamarin wellformedness warning about derivation checks | A heuristic pre-check timed out | Benign. `--derivcheck-timeout=0` disables it; the Makefile already passes it |
-| `IEEEtran.cls not found` | BasicTeX lacks the class | `sudo tlmgr install ieeetran` |
-| `! LaTeX Error: File 'generated/...' not found` | Figures/tables not built | `make figures tables` first, or just `make report` |
-| Citations render as `[?]` | Bibliography needs a second pass | `cd report && latexmk -pdf -g main.tex` |
 | Results look stale after editing a model | `results.json` not regenerated | `make verify` then `make tables` |
 | Whole machine sluggish during `make verify` | Two verifiers running at once | Run `make verify-proverif` and `make verify-tamarin` separately |
 | `Permission denied` running a script | Execute bit lost in transit | Use `bash run.sh` rather than `./run.sh` |
 | `make install` cannot find `brew` | Homebrew not installed | Install from https://brew.sh, then re-run |
-| Password prompt during the run | `tlmgr` needs administrator rights | Expected. Use `--no-latex` to avoid it |
 | `unbound variable` from a shell script | An old checkout, on bash 3.2 | Fixed here; these scripts no longer use `set -u` |
 
 ## Rebuilding from scratch
@@ -344,7 +299,7 @@ Or in pieces:
 ```sh
 make distclean
 make verify        # regenerate results (needs both verifiers)
-make all           # checks, figures, tables, report
+make all           # checks, figures, tables
 make summary       # headline results
 ```
 
@@ -366,7 +321,6 @@ make summary       # headline results
 | `make verify-tamarin` | Tamarin | ~40 s |
 | `make verify-proverif` | ProVerif | ~7 min |
 | `make verify` | both | ~8 min |
-| `make report` | LaTeX | ~20 s |
 | `make summary` | Python 3 | instant |
 
 ### Useful overrides
@@ -375,7 +329,6 @@ make summary       # headline results
 make verify TIMEOUT=600                    # a longer budget per query
 make verify MEM_KB=4000000                 # a larger address-space cap (Linux)
 bash scripts/run_models.sh 20_secrecy      # one query only
-bash run.sh --no-latex                     # skip the LaTeX packages
 bash run.sh --run                          # pipeline only, no installation
 bash scripts/bootstrap.sh --dry-run        # show what installation would do
 ```

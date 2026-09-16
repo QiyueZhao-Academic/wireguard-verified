@@ -4,23 +4,18 @@
 # Idempotent: every step checks first and skips what is already present, so
 # re-running this is cheap and safe.  Nothing is removed or downgraded.
 #
-# Steps that need administrator rights (only the LaTeX package install) will
-# prompt for your password.  Pass --no-latex to skip that step entirely.
-#
 #   bash scripts/bootstrap.sh              install everything
-#   bash scripts/bootstrap.sh --no-latex   skip the LaTeX packages
 #   bash scripts/bootstrap.sh --dry-run    print what would happen, change nothing
 
 # `set -u` is deliberately absent: macOS ships bash 3.2, where expanding an
 # empty array aborts the script.  See the same note in run.sh.
 set -o pipefail
 
-DRY=0; DO_LATEX=1
+DRY=0
 for a in "$@"; do
   case "$a" in
     --dry-run)  DRY=1 ;;
-    --no-latex) DO_LATEX=0 ;;
-    -h|--help)  sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help)  sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown option: $a" >&2; exit 2 ;;
   esac
 done
@@ -165,46 +160,6 @@ else
     note "if a new shell cannot find proverif, run:  eval \"\$(opam env)\""
     note "run.sh does this for you automatically."
   fi
-fi
-
-# --------------------------------------------------------------------------
-step "LaTeX packages for the report"
-if [ "$DO_LATEX" -eq 0 ]; then
-  note "skipped (--no-latex); 'make report' will be unavailable"
-elif ! command -v kpsewhich >/dev/null 2>&1; then
-  if [ "$OS" = "Darwin" ]; then
-    note "no TeX installation found"
-    run brew install --cask basictex || fail basictex
-    note "open a new Terminal (or run: eval \"\$(/usr/libexec/path_helper)\")"
-    note "then re-run this script to add the packages"
-  else
-    note "install TeX Live with your package manager"; fail latex
-  fi
-elif kpsewhich booktabs.sty >/dev/null 2>&1 && kpsewhich tikz.sty >/dev/null 2>&1; then
-  # IEEEtran is deliberately not checked for: it is bundled in report/vendor
-  # and put first on TEXINPUTS by the Makefile.  Requiring it here is what
-  # made this step look like it had succeeded when tlmgr had in fact failed.
-  skip "LaTeX packages for the report (IEEEtran is bundled)"
-else
-  note "adding packages -- this asks for your macOS login password"
-  note "(nothing is displayed while you type; that is normal)"
-  note "to skip this step entirely, re-run with --no-latex"
-  # Installed one at a time: some are already present in a full TeX Live and
-  # tlmgr aborts the whole batch if any single name is unknown there.
-  #
-  # `ieeetran` is deliberately absent from this list.  It used to be the first
-  # entry, and on a BasicTeX whose tlmgr repository is out of date the install
-  # exits non-zero, gets reported below as "already present or not applicable",
-  # and the first sign of trouble is a failed `make report` several minutes
-  # later.  The class is bundled in report/vendor/ instead, so this loop only
-  # has to cover packages a normal TeX installation already ships.
-  for p in latexmk booktabs pgf xcolor microtype cite hyperref \
-           amsmath ec collection-fontsrecommended; do
-    if [ "$DRY" -eq 1 ]; then echo "    would run: sudo tlmgr install $p"
-    else sudo tlmgr install "$p" >/dev/null 2>&1 \
-           && echo "    + $p" \
-           || echo "    . $p (already present or not applicable)"; fi
-  done
 fi
 
 # --------------------------------------------------------------------------

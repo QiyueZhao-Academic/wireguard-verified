@@ -129,18 +129,6 @@ def main() -> int:
         line("", "", "brew install tamarin-prover/tap/tamarin-prover")
         line("", "", "(Homebrew 6 refuses untrusted taps; the trust step is required)")
 
-    for exe, why in (("latexmk", "`make report`"), ("pdflatex", "`make report`")):
-        line(OK if shutil.which(exe) else WARN, exe,
-             "" if shutil.which(exe) else f"not found -- {why} unavailable")
-    # IEEEtran is bundled in report/vendor/ and put first on TEXINPUTS by the
-    # `report` target, so a missing system-wide copy is not a problem.  This
-    # check used to report it as one, which sent people to a `tlmgr install`
-    # that fails silently on an out-of-date BasicTeX.
-    bundled = (ROOT / "report" / "vendor" / "IEEEtran.cls").exists()
-    line(OK if bundled else BAD, "IEEEtran.cls",
-         "bundled in report/vendor" if bundled
-         else "missing from report/vendor -- `make report` will fail")
-
     # --- repository integrity --------------------------------------------
     print()
     need = ["models/proverif/lib/primitives.pvl",

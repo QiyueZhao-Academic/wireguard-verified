@@ -2,7 +2,6 @@
 #
 # Targets are grouped by what they need:
 #   no dependencies beyond Python 3 : check figures tables wire-doc
-#   LaTeX                           : report
 #   ProVerif and Tamarin            : verify verify-proverif verify-tamarin
 #
 # Run `make doctor` first; it reports exactly which group is available.
@@ -36,7 +35,7 @@ PVKEM   := pq/30_kem_psk_ideal pq/31_kem_psk_reencap
 TAMLEM  := executable session_key_secrecy forward_secrecy agreement_responder \
            kci_responder_commit kci_responder_complete
 
-.PHONY: all everything install doctor check figures tables wire-doc report \
+.PHONY: all everything install doctor check figures tables wire-doc \
         summary verify verify-proverif verify-tamarin clean distclean help
 
 # Introspection: `make print-PVQ` echoes one variable.  scripts/run_models.sh
@@ -51,25 +50,24 @@ help:
 	@echo "  bash run.sh          install what is missing, then run the pipeline"
 	@echo ""
 	@echo "OR THE TWO HALVES SEPARATELY"
-	@echo "  make install         install ProVerif, Tamarin and LaTeX (idempotent)"
+	@echo "  make install         install ProVerif and Tamarin (idempotent)"
 	@echo "  make everything      run the whole pipeline end to end (~9 min)"
 	@echo ""
 	@echo "INDIVIDUAL STEPS (all still available)"
 	@echo "  make doctor          environment self-check"
 	@echo "  make check           layout, model and coverage checks (Python only)"
-	@echo "  make figures         SVG and TikZ figures (Python only)"
+	@echo "  make figures         SVG figures (Python only)"
 	@echo "  make tables          result tables from results/results.json"
 	@echo "  make wire-doc        regenerate docs/wire-to-model.md from tools/wire.py"
-	@echo "  make report          compile the IEEE-format report (needs LaTeX)"
 	@echo "  make verify          both model suites, then check expectations"
 	@echo "  make verify-proverif ProVerif queries only (~7 min)"
 	@echo "  make verify-tamarin  Tamarin lemmas only (~40 s)"
 	@echo "  make summary         print the headline results"
-	@echo "  make all             check + figures + tables + report (no verifiers)"
+	@echo "  make all             check + figures + tables (no verifiers)"
 	@echo "  make clean           remove build intermediates"
 	@echo "  make distclean       also remove generated results"
 
-all: check figures tables report
+all: check figures tables
 
 # --- Installation ----------------------------------------------------------
 # Idempotent: every step checks first and skips what is already present.
@@ -78,17 +76,17 @@ install:
 
 # --- The full pipeline -----------------------------------------------------
 # Runs to completion even when a verifier is absent: the static half still
-# produces figures, tables and the report, and the summary says what is
-# missing.  About nine minutes with both verifiers installed.
+# produces figures and tables, and the summary says what is missing.  About
+# nine minutes with both verifiers installed.
 everything:
 	@echo ""
-	@echo "=== 1/5  environment ==============================================="
+	@echo "=== 1/4  environment ==============================================="
 	@$(MAKE) --no-print-directory doctor
 	@echo ""
-	@echo "=== 2/5  static checks ============================================="
+	@echo "=== 2/4  static checks ============================================="
 	@$(MAKE) --no-print-directory check
 	@echo ""
-	@echo "=== 3/5  verification =============================================="
+	@echo "=== 3/4  verification =============================================="
 	@if command -v $(PV) >/dev/null 2>&1 || command -v $(TAMARIN) >/dev/null 2>&1; then \
 	   $(MAKE) --no-print-directory verify || \
 	     echo "  (see results/raw/ for the detail of any mismatch)"; \
@@ -98,14 +96,9 @@ everything:
 	   $(PY) scripts/collect_results.py; \
 	 fi
 	@echo ""
-	@echo "=== 4/5  figures and tables ========================================"
+	@echo "=== 4/4  figures and tables ========================================"
 	@$(MAKE) --no-print-directory figures
 	@$(MAKE) --no-print-directory tables
-	@echo ""
-	@echo "=== 5/5  report ===================================================="
-	@if command -v latexmk >/dev/null 2>&1; then $(MAKE) --no-print-directory report; \
-	 else echo "  latexmk not found -- no docs/report.pdf produced"; \
-	      echo "  install a TeX distribution, then: make report"; fi
 	@$(PY) scripts/summary.py
 
 summary:
@@ -133,42 +126,6 @@ tables: wire-doc
 	@$(PY) scripts/collect_results.py
 	@$(PY) scripts/render_tables.py >/dev/null && echo "  tables rendered"
 	@$(PY) scripts/sync_readme.py
-
-# --- Report ----------------------------------------------------------------
-# TEXINPUTS/BSTINPUTS put report/vendor first so the vendored IEEEtran.cls and
-# IEEEtran.bst are used even where a system-wide copy exists.  That is what
-# makes `make report` work on a plain BasicTeX with no privileged install: the
-# previous arrangement depended on `sudo tlmgr install ieeetran`, which fails
-# quietly on an out-of-date tlmgr repository and left the shipped PDF in place
-# while printing a one-line failure nobody had to act on.  The trailing colon
-# keeps the default search path after ours.  See report/vendor/README.md.
-#
-# latexmk resolves cross-references and the bibliography by re-running as
-# needed, but on a clean tree the first pdflatex has no .aux to work from, so
-# bibtex has nothing to read and citations would render as [?].  Running
-# latexmk twice guarantees a settled document whatever state the tree was in.
-#
-# A failed compilation is an error, not a note: the target exits non-zero and
-# prints the first real LaTeX error, because a build that says "failed" in
-# passing is a build whose output nobody checks.
-report: figures tables
-	@cd report && \
-	  TEXINPUTS="./vendor:$$TEXINPUTS" BSTINPUTS="./vendor:$$BSTINPUTS" \
-	    latexmk -pdf -interaction=nonstopmode main.tex >/dev/null 2>&1; \
-	  TEXINPUTS="./vendor:$$TEXINPUTS" BSTINPUTS="./vendor:$$BSTINPUTS" \
-	    latexmk -pdf -interaction=nonstopmode main.tex >/dev/null 2>&1; \
-	  if [ -f main.pdf ]; then \
-	    cp main.pdf ../docs/report.pdf; \
-	    echo "  docs/report.pdf written"; \
-	    if grep -qE 'Reference .* undefined|Citation .* undefined' main.log 2>/dev/null; then \
-	      echo "  report: unresolved references remain -- see report/main.log"; \
-	    fi; \
-	  else \
-	    echo "  report: COMPILATION FAILED"; \
-	    grep -m3 -A2 '^!' main.log 2>/dev/null | sed 's/^/    /' || true; \
-	    echo "    full log: report/main.log"; \
-	    exit 1; \
-	  fi
 
 # --- Verification ----------------------------------------------------------
 # One query per invocation with a clean heap.  Proving everything in a single
@@ -214,8 +171,6 @@ verify-tamarin:
 	fi
 
 clean:
-	@cd report && latexmk -C >/dev/null 2>&1 || true
-	@rm -rf report/*.aux report/*.log report/*.out report/*.bbl report/*.blg
 	@find . -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true
 	@echo "  cleaned"
 
